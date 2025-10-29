@@ -8,6 +8,7 @@
     "dev": "nodemon app.js",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
+    "test:db": "node test-db-connection.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.js\""

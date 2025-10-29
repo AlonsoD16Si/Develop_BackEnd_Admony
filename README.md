@@ -71,16 +71,16 @@
 
 ## 🛠️ Tecnologías
 
-| Tecnología | Versión | Uso |
-|------------|---------|-----|
-| Node.js | ≥18.0.0 | Runtime de JavaScript |
-| Express | ^4.19.2 | Framework web |
-| SQL Server | ≥2019 | Base de datos relacional |
-| JWT | ^9.0.2 | Autenticación |
-| Bcrypt | ^2.4.3 | Encriptación de contraseñas |
-| Helmet | ^7.1.0 | Seguridad HTTP |
-| CORS | ^2.8.5 | Manejo de CORS |
-| Express-Validator | ^7.0.1 | Validación de datos |
+| Tecnología        | Versión | Uso                         |
+| ----------------- | ------- | --------------------------- |
+| Node.js           | ≥18.0.0 | Runtime de JavaScript       |
+| Express           | ^4.19.2 | Framework web               |
+| SQL Server        | ≥2019   | Base de datos relacional    |
+| JWT               | ^9.0.2  | Autenticación               |
+| Bcrypt            | ^2.4.3  | Encriptación de contraseñas |
+| Helmet            | ^7.1.0  | Seguridad HTTP              |
+| CORS              | ^2.8.5  | Manejo de CORS              |
+| Express-Validator | ^7.0.1  | Validación de datos         |
 
 ---
 
@@ -140,11 +140,13 @@ Ejecuta el script SQL para crear las tablas necesarias (ver sección [Base de Da
 ### 5. Iniciar el servidor
 
 **Modo desarrollo (con nodemon):**
+
 ```bash
 npm run dev
 ```
 
 **Modo producción:**
+
 ```bash
 npm start
 ```
@@ -157,17 +159,17 @@ El servidor estará disponible en: `http://localhost:3000`
 
 ### Variables de Entorno
 
-| Variable | Descripción | Valor por defecto |
-|----------|-------------|-------------------|
-| `NODE_ENV` | Entorno de ejecución | `development` |
-| `PORT` | Puerto del servidor | `3000` |
-| `DB_USER` | Usuario de SQL Server | - |
-| `DB_PASSWORD` | Contraseña de la BD | - |
-| `DB_SERVER` | Servidor de la BD | `localhost` |
-| `DB_NAME` | Nombre de la BD | `admony_db` |
-| `JWT_SECRET` | Clave secreta para JWT | - |
-| `JWT_EXPIRES_IN` | Tiempo de expiración del token | `7d` |
-| `CORS_ORIGIN` | Orígenes permitidos | `*` |
+| Variable         | Descripción                    | Valor por defecto |
+| ---------------- | ------------------------------ | ----------------- |
+| `NODE_ENV`       | Entorno de ejecución           | `development`     |
+| `PORT`           | Puerto del servidor            | `3000`            |
+| `DB_USER`        | Usuario de SQL Server          | -                 |
+| `DB_PASSWORD`    | Contraseña de la BD            | -                 |
+| `DB_SERVER`      | Servidor de la BD              | `localhost`       |
+| `DB_NAME`        | Nombre de la BD                | `admony_db`       |
+| `JWT_SECRET`     | Clave secreta para JWT         | -                 |
+| `JWT_EXPIRES_IN` | Tiempo de expiración del token | `7d`              |
+| `CORS_ORIGIN`    | Orígenes permitidos            | `*`               |
 
 ---
 
@@ -213,13 +215,13 @@ admony-backend/
 
 ## 📜 Scripts Disponibles
 
-| Script | Comando | Descripción |
-|--------|---------|-------------|
-| Desarrollo | `npm run dev` | Inicia el servidor con nodemon |
-| Producción | `npm start` | Inicia el servidor en modo producción |
-| Tests | `npm test` | Ejecuta los tests con Jest |
-| Lint | `npm run lint` | Analiza el código con ESLint |
-| Formato | `npm run format` | Formatea el código con Prettier |
+| Script     | Comando          | Descripción                           |
+| ---------- | ---------------- | ------------------------------------- |
+| Desarrollo | `npm run dev`    | Inicia el servidor con nodemon        |
+| Producción | `npm start`      | Inicia el servidor en modo producción |
+| Tests      | `npm test`       | Ejecuta los tests con Jest            |
+| Lint       | `npm run lint`   | Analiza el código con ESLint          |
+| Formato    | `npm run format` | Formatea el código con Prettier       |
 
 ---
 
@@ -227,60 +229,60 @@ admony-backend/
 
 ### Autenticación
 
-| Método | Endpoint | Descripción | Auth |
-|--------|----------|-------------|------|
-| POST | `/api/auth/register` | Registrar nuevo usuario | No |
-| POST | `/api/auth/login` | Iniciar sesión | No |
-| GET | `/api/auth/profile` | Obtener perfil | Sí |
-| POST | `/api/auth/request-password-reset` | Solicitar recuperación | No |
-| POST | `/api/auth/reset-password` | Restablecer contraseña | No |
+| Método | Endpoint                           | Descripción             | Auth |
+| ------ | ---------------------------------- | ----------------------- | ---- |
+| POST   | `/api/auth/register`               | Registrar nuevo usuario | No   |
+| POST   | `/api/auth/login`                  | Iniciar sesión          | No   |
+| GET    | `/api/auth/profile`                | Obtener perfil          | Sí   |
+| POST   | `/api/auth/request-password-reset` | Solicitar recuperación  | No   |
+| POST   | `/api/auth/reset-password`         | Restablecer contraseña  | No   |
 
 ### Gastos
 
-| Método | Endpoint | Descripción | Auth |
-|--------|----------|-------------|------|
-| POST | `/api/expenses` | Crear gasto | Sí |
-| GET | `/api/expenses` | Listar gastos | Sí |
-| GET | `/api/expenses/:id` | Obtener gasto | Sí |
-| PUT | `/api/expenses/:id` | Actualizar gasto | Sí |
-| DELETE | `/api/expenses/:id` | Eliminar gasto | Sí |
-| GET | `/api/expenses/stats` | Estadísticas | Sí |
+| Método | Endpoint              | Descripción      | Auth |
+| ------ | --------------------- | ---------------- | ---- |
+| POST   | `/api/expenses`       | Crear gasto      | Sí   |
+| GET    | `/api/expenses`       | Listar gastos    | Sí   |
+| GET    | `/api/expenses/:id`   | Obtener gasto    | Sí   |
+| PUT    | `/api/expenses/:id`   | Actualizar gasto | Sí   |
+| DELETE | `/api/expenses/:id`   | Eliminar gasto   | Sí   |
+| GET    | `/api/expenses/stats` | Estadísticas     | Sí   |
 
 ### Ahorros
 
-| Método | Endpoint | Descripción | Auth |
-|--------|----------|-------------|------|
-| POST | `/api/savings` | Crear ahorro | Sí |
-| GET | `/api/savings` | Listar ahorros | Sí |
-| GET | `/api/savings/:id` | Obtener ahorro | Sí |
-| PUT | `/api/savings/:id` | Actualizar ahorro | Sí |
-| DELETE | `/api/savings/:id` | Eliminar ahorro | Sí |
-| GET | `/api/savings/progress` | Progreso de ahorros | Sí |
+| Método | Endpoint                | Descripción         | Auth |
+| ------ | ----------------------- | ------------------- | ---- |
+| POST   | `/api/savings`          | Crear ahorro        | Sí   |
+| GET    | `/api/savings`          | Listar ahorros      | Sí   |
+| GET    | `/api/savings/:id`      | Obtener ahorro      | Sí   |
+| PUT    | `/api/savings/:id`      | Actualizar ahorro   | Sí   |
+| DELETE | `/api/savings/:id`      | Eliminar ahorro     | Sí   |
+| GET    | `/api/savings/progress` | Progreso de ahorros | Sí   |
 
 ### Presupuestos
 
-| Método | Endpoint | Descripción | Auth |
-|--------|----------|-------------|------|
-| POST | `/api/budgets` | Crear presupuesto | Sí |
-| GET | `/api/budgets` | Listar presupuestos | Sí |
-| GET | `/api/budgets/:id` | Obtener presupuesto | Sí |
-| PUT | `/api/budgets/:id` | Actualizar presupuesto | Sí |
-| DELETE | `/api/budgets/:id` | Eliminar presupuesto | Sí |
-| GET | `/api/budgets/analysis` | Análisis de presupuestos | Sí |
+| Método | Endpoint                | Descripción              | Auth |
+| ------ | ----------------------- | ------------------------ | ---- |
+| POST   | `/api/budgets`          | Crear presupuesto        | Sí   |
+| GET    | `/api/budgets`          | Listar presupuestos      | Sí   |
+| GET    | `/api/budgets/:id`      | Obtener presupuesto      | Sí   |
+| PUT    | `/api/budgets/:id`      | Actualizar presupuesto   | Sí   |
+| DELETE | `/api/budgets/:id`      | Eliminar presupuesto     | Sí   |
+| GET    | `/api/budgets/analysis` | Análisis de presupuestos | Sí   |
 
 ### Dashboard
 
-| Método | Endpoint | Descripción | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/dashboard/summary` | Resumen financiero | Sí |
-| GET | `/api/dashboard/charts` | Datos para gráficas | Sí |
-| GET | `/api/dashboard/alerts` | Alertas | Sí |
+| Método | Endpoint                 | Descripción         | Auth |
+| ------ | ------------------------ | ------------------- | ---- |
+| GET    | `/api/dashboard/summary` | Resumen financiero  | Sí   |
+| GET    | `/api/dashboard/charts`  | Datos para gráficas | Sí   |
+| GET    | `/api/dashboard/alerts`  | Alertas             | Sí   |
 
 ### Health Check
 
-| Método | Endpoint | Descripción | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/health` | Estado de la API | No |
+| Método | Endpoint      | Descripción      | Auth |
+| ------ | ------------- | ---------------- | ---- |
+| GET    | `/api/health` | Estado de la API | No   |
 
 ---
 
