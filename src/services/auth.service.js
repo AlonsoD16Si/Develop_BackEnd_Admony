@@ -61,14 +61,14 @@ const register = async ({ email, password, nombre, apellido }) => {
 /**
  * Iniciar sesión
  */
-const login = async ({ email, password }) => {
+const login = async ({ correo, constrasenia}) => {
     const pool = getPool();
 
     // Buscar usuario
     const result = await pool
         .request()
-        .input('email', sql.VarChar, email)
-        .query('SELECT * FROM usuarios WHERE email = @email');
+        .input('correo', sql.VarChar, correo)
+        .query('SELECT * FROM usuario WHERE correo = @correo');
 
     if (result.recordset.length === 0) {
         const error = new Error('Credenciales inválidas');
@@ -79,7 +79,7 @@ const login = async ({ email, password }) => {
     const user = result.recordset[0];
 
     // Verificar contraseña
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(constrasenia, user.Contrasenia);
 
     if (!isPasswordValid) {
         const error = new Error('Credenciales inválidas');
@@ -89,9 +89,9 @@ const login = async ({ email, password }) => {
 
     // Generar token
     const token = generateToken({
-        id: user.id,
-        email: user.email,
-        role: user.role,
+        id: user.Id_Usuario,
+        email: user.Correo,
+        role: user.Rol,
     });
 
     return {

@@ -32,8 +32,8 @@ router.post(
 router.post(
     '/login',
     [
-        body('email').isEmail().withMessage('Email inválido'),
-        body('password').notEmpty().withMessage('La contraseña es requerida'),
+        body('correo').isEmail().withMessage('Email inválido'),
+        body('constrasenia').notEmpty().withMessage('La contraseña es requerida'),
         validate,
     ],
     authController.login
