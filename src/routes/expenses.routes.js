@@ -17,9 +17,9 @@ router.post(
     '/',
     [
         body('monto').isFloat({ min: 0 }).withMessage('El monto debe ser un número positivo'),
-        body('categoria').notEmpty().withMessage('La categoría es requerida'),
-        body('tipo').optional().isIn(['unico', 'recurrente']).withMessage('Tipo inválido'),
-        body('fecha').optional().isISO8601().withMessage('Fecha inválida'),
+        body('id_categoria').notEmpty().withMessage('La categoría es requerida'),
+        body('id_saldo').notEmpty().withMessage('El saldo es requerido para vincular a usuario'),
+        body('tipo').optional().isIn(['Ingreso','Egreso','Domiciliacion']).withMessage('Tipo inválido'),
         validate,
     ],
     expensesController.createExpense

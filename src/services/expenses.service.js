@@ -3,51 +3,44 @@ const { getPool, sql } = require('../config/database');
 /**
  * Crear un nuevo gasto
  */
-const createExpense = async (userId, expenseData) => {
+const createExpense = async (Id_Usuario, expenseData) => {
     const pool = getPool();
-    const { monto, categoria, descripcion, tipo, fecha } = expenseData;
+    const saldo = await GetSaldo(Id_Usuario);
+    const { monto, id_categoria, descripcion, tipo } = expenseData;
 
     const result = await pool
         .request()
-        .input('userId', sql.Int, userId)
-        .input('monto', sql.Decimal(10, 2), monto)
-        .input('categoria', sql.VarChar, categoria)
-        .input('descripcion', sql.VarChar, descripcion || null)
-        .input('tipo', sql.VarChar, tipo || 'unico')
-        .input('fecha', sql.DateTime, fecha || new Date())
+        .input('Id_Saldo', sql.Int, saldo[0].Id_Saldo)
+        .input('Monto', sql.Decimal(10, 2), monto)
+        .input('Id_Categoria', sql.Int, id_categoria)
+        .input('Descripcion', sql.VarChar, descripcion || null)
+        .input('TipoMovimiento', sql.VarChar, tipo || 'Egreso')
         .query(`
-      INSERT INTO gastos (usuario_id, monto, categoria, descripcion, tipo, fecha)
+      INSERT INTO Movimiento (Id_Saldo ,Id_Categoria, TipoMovimiento, Monto, Descripcion)
       OUTPUT INSERTED.*
-      VALUES (@userId, @monto, @categoria, @descripcion, @tipo, @fecha)
+      VALUES (@Id_Saldo, @Id_Categoria, @TipoMovimiento, @Monto, @Descripcion)
     `);
 
     return result.recordset[0];
 };
 
-/**
- * Obtener gastos del usuario con filtros
- */
-const getExpenses = async (userId, filters = {}) => {
+const GetSaldo = async (id) => {
     const pool = getPool();
-    let query = 'SELECT * FROM gastos WHERE usuario_id = @userId';
-    const request = pool.request().input('userId', sql.Int, userId);
+    let query = `SELECT Id_Saldo FROM Saldo WHERE Id_Usuario = @Id_Usuario`;
+    const request = pool.request().input('Id_Usuario', sql.Int, id);
+    const result = await request.query(query);
+    return result.recordset;
+}
 
-    if (filters.startDate) {
-        query += ' AND fecha >= @startDate';
-        request.input('startDate', sql.DateTime, filters.startDate);
-    }
+/* Obtener gastos */
+const getExpenses = async (Id_Usuario, filters = {}) => {
 
-    if (filters.endDate) {
-        query += ' AND fecha <= @endDate';
-        request.input('endDate', sql.DateTime, filters.endDate);
-    }
+    const saldo = await GetSaldo(Id_Usuario);
+    const pool = getPool();
 
-    if (filters.category) {
-        query += ' AND categoria = @category';
-        request.input('category', sql.VarChar, filters.category);
-    }
-
-    query += ' ORDER BY fecha DESC';
+    let query = `SELECT Id_Movimiento, Id_Categoria, TipoMovimiento, Monto, Descripcion, FechaMovimiento
+        FROM Movimiento WHERE TipoMovimiento = 'Egreso' and Id_Saldo = @Id_Saldo ORDER BY FechaMovimiento DESC `;
+    const request = pool.request().input('Id_Saldo', sql.Int, saldo[0].Id_Saldo);
 
     const result = await request.query(query);
     return result.recordset;
@@ -64,42 +57,6 @@ const getExpenseById = async (userId, expenseId) => {
         .input('userId', sql.Int, userId)
         .input('expenseId', sql.Int, expenseId)
         .query('SELECT * FROM gastos WHERE id = @expenseId AND usuario_id = @userId');
-
-    if (result.recordset.length === 0) {
-        const error = new Error('Gasto no encontrado');
-        error.statusCode = 404;
-        throw error;
-    }
-
-    return result.recordset[0];
-};
-
-/**
- * Actualizar un gasto
- */
-const updateExpense = async (userId, expenseId, updateData) => {
-    const pool = getPool();
-    const { monto, categoria, descripcion, tipo, fecha } = updateData;
-
-    const result = await pool
-        .request()
-        .input('userId', sql.Int, userId)
-        .input('expenseId', sql.Int, expenseId)
-        .input('monto', sql.Decimal(10, 2), monto)
-        .input('categoria', sql.VarChar, categoria)
-        .input('descripcion', sql.VarChar, descripcion)
-        .input('tipo', sql.VarChar, tipo)
-        .input('fecha', sql.DateTime, fecha)
-        .query(`
-      UPDATE gastos
-      SET monto = @monto,
-          categoria = @categoria,
-          descripcion = @descripcion,
-          tipo = @tipo,
-          fecha = @fecha
-      OUTPUT INSERTED.*
-      WHERE id = @expenseId AND usuario_id = @userId
-    `);
 
     if (result.recordset.length === 0) {
         const error = new Error('Gasto no encontrado');
@@ -158,7 +115,6 @@ module.exports = {
     createExpense,
     getExpenses,
     getExpenseById,
-    updateExpense,
     deleteExpense,
     getExpenseStats,
 };
