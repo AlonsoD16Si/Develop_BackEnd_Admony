@@ -5,54 +5,52 @@ const { generateToken } = require('../config/jwt');
 /**
  * Registrar un nuevo usuario
  */
-const register = async ({ email, password, nombre, apellido }) => {
+const register = async ({ correo, contrasenia, nombre}) => {
     const pool = getPool();
 
     // Verificar si el usuario ya existe
     const existingUser = await pool
         .request()
-        .input('email', sql.VarChar, email)
-        .query('SELECT id FROM usuarios WHERE email = @email');
+        .input('correo', sql.VarChar, correo)
+        .query('SELECT id_usuario FROM Usuario WHERE correo = @correo');
 
     if (existingUser.recordset.length > 0) {
-        const error = new Error('El email ya está registrado');
+        const error = new Error('El correo ya está registrado');
         error.statusCode = 400;
         throw error;
     }
 
     // Encriptar contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(contrasenia, 10);
 
     // Insertar usuario
     const result = await pool
         .request()
-        .input('email', sql.VarChar, email)
-        .input('password', sql.VarChar, hashedPassword)
+        .input('correo', sql.VarChar, correo)
+        .input('contrasenia', sql.VarChar, hashedPassword)
         .input('nombre', sql.VarChar, nombre)
-        .input('apellido', sql.VarChar, apellido)
-        .input('role', sql.VarChar, 'usuario')
+        .input('rol', sql.VarChar, 'usuario')
         .query(`
-      INSERT INTO usuarios (email, password, nombre, apellido, role)
-      OUTPUT INSERTED.id, INSERTED.email, INSERTED.nombre, INSERTED.apellido, INSERTED.role
-      VALUES (@email, @password, @nombre, @apellido, @role)
+      INSERT INTO usuario (correo, contrasenia, nombre, rol, Estatus)
+      OUTPUT INSERTED.id_usuario, INSERTED.correo, INSERTED.nombre, INSERTED.rol
+      VALUES (@correo, @contrasenia, @nombre, @rol, 1)
     `);
 
     const user = result.recordset[0];
 
     // Generar token
     const token = generateToken({
-        id: user.id,
-        email: user.email,
-        role: user.role,
+        Id_Usuario: user.Id_Usuario,
+        Correo: user.Correo,
+        Rol: user.Rol,
     });
 
     return {
         user: {
-            id: user.id,
-            email: user.email,
-            nombre: user.nombre,
-            apellido: user.apellido,
-            role: user.role,
+            Id_Usuario: user.Id_Usuario,
+            Correo: user.Correo,
+            Nombre: user.Nombre,
+            Rol: user.Rol,
         },
         token,
     };
@@ -61,14 +59,14 @@ const register = async ({ email, password, nombre, apellido }) => {
 /**
  * Iniciar sesión
  */
-const login = async ({ correo, constrasenia}) => {
+const login = async ({ correo, contrasenia}) => {
     const pool = getPool();
 
     // Buscar usuario
     const result = await pool
         .request()
         .input('correo', sql.VarChar, correo)
-        .query('SELECT * FROM usuario WHERE correo = @correo');
+        .query('SELECT * FROM Usuario WHERE correo = @correo');
 
     if (result.recordset.length === 0) {
         const error = new Error('Credenciales inválidas');
@@ -79,7 +77,7 @@ const login = async ({ correo, constrasenia}) => {
     const user = result.recordset[0];
 
     // Verificar contraseña
-    const isPasswordValid = await bcrypt.compare(constrasenia, user.Contrasenia);
+    const isPasswordValid = await bcrypt.compare(contrasenia, user.Contrasenia);
 
     if (!isPasswordValid) {
         const error = new Error('Credenciales inválidas');
@@ -89,18 +87,17 @@ const login = async ({ correo, constrasenia}) => {
 
     // Generar token
     const token = generateToken({
-        id: user.Id_Usuario,
-        email: user.Correo,
-        role: user.Rol,
+        Id_Usuario: user.Id_Usuario,
+        Correo: user.Correo,
+        Rol: user.Rol,
     });
 
     return {
         user: {
-            id: user.id,
-            email: user.email,
-            nombre: user.nombre,
-            apellido: user.apellido,
-            role: user.role,
+            Id_Usuario: user.Id_Usuario,
+            Correo: user.Correo,
+            Nombre: user.Nombre,
+            Rol: user.Rol,
         },
         token,
     };
@@ -109,13 +106,13 @@ const login = async ({ correo, constrasenia}) => {
 /**
  * Obtener perfil de usuario
  */
-const getProfile = async (userId) => {
+const getProfile = async (Id_Usuario) => {
     const pool = getPool();
 
     const result = await pool
         .request()
-        .input('userId', sql.Int, userId)
-        .query('SELECT id, email, nombre, apellido, role, created_at FROM usuarios WHERE id = @userId');
+        .input('Id_Usuario', sql.Int, Id_Usuario)
+        .query('SELECT Id_Usuario, Correo, Nombre, Rol FROM Usuario WHERE Id_Usuario = @Id_Usuario');
 
     if (result.recordset.length === 0) {
         const error = new Error('Usuario no encontrado');
@@ -129,14 +126,14 @@ const getProfile = async (userId) => {
 /**
  * Solicitar recuperación de contraseña
  */
-const requestPasswordReset = async (email) => {
+const requestPasswordReset = async (correo) => {
     // TODO: Implementar lógica de envío de email con token de recuperación
     const pool = getPool();
 
     const result = await pool
         .request()
-        .input('email', sql.VarChar, email)
-        .query('SELECT id FROM usuarios WHERE email = @email');
+        .input('correo', sql.VarChar, correo)
+        .query('SELECT Id_Usuario FROM Usuario WHERE Correo = @correo');
 
     if (result.recordset.length === 0) {
         // Por seguridad, no revelar si el email existe o no

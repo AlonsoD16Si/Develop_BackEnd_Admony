@@ -1,48 +1,37 @@
-const { verifyToken } = require('../config/jwt');
+const jwt = require('jsonwebtoken');
 
-/**
- * Middleware para verificar autenticación
- */
 const authenticateToken = (req, res, next) => {
-    try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-        if (!token) {
-            return res.status(401).json({
-                success: false,
-                message: 'Token de autenticación no proporcionado',
-            });
-        }
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: 'Token no proporcionado',
+    });
+  }
 
-        const decoded = verifyToken(token);
-        req.user = decoded;
-        next();
-    } catch (error) {
-        return res.status(403).json({
-            success: false,
-            message: 'Token inválido o expirado',
-        });
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({
+        success: false,
+        message: 'Token inválido o expirado',
+      });
     }
+
+    req.user = user;
+    next();
+  });
 };
 
-/**
- * Middleware para verificar roles específicos
- */
-const authorizeRoles = (...roles) => {
-    return (req, res, next) => {
-        if (!req.user || !roles.includes(req.user.role)) {
-            return res.status(403).json({
-                success: false,
-                message: 'No tiene permisos para acceder a este recurso',
-            });
-        }
-        next();
-    };
+const isAdmin = (req, res, next) => {
+  if (req.user.Rol !== 'Administrador') {
+    return res.status(403).json({
+      success: false,
+      message: 'Acceso denegado. Se requiere rol de Administrador',
+    });
+  }
+  next();
 };
 
-module.exports = {
-    authenticateToken,
-    authorizeRoles,
-};
-
+module.exports = { authenticateToken, isAdmin };
