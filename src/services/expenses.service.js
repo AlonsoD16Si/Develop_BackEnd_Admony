@@ -6,7 +6,7 @@ const { getPool, sql } = require('../config/database');
 const createExpense = async (Id_Usuario, expenseData) => {
     const pool = getPool();
     const data = await GetSaldo(Id_Usuario);
-    const { monto, id_categoria, descripcion, tipo } = expenseData;
+    const { monto, id_categoria, descripcion, tipomovimiento } = expenseData;
 
     if (!data || data.length === 0) {
         throw new Error('No se encontró el saldo del usuario');
@@ -18,47 +18,60 @@ const createExpense = async (Id_Usuario, expenseData) => {
         throw new Error('El monto debe ser un número positivo');
     }
 
-    if (monto > saldoActual) {
-        throw new Error('No hay suficiente saldo');
-    }
-
-    const transaction = pool.transaction();
+    const transaction = new sql.Transaction(pool); // ✅ importante
 
     try {
-        await transaction.begin();
+        await transaction.begin(); // ✅ se inicia antes de todo
 
-        const request = transaction.request();
+        const request = new sql.Request(transaction);
         request.input('Id_Saldo', sql.Int, data[0].Id_Saldo);
         request.input('Monto', sql.Decimal(10, 2), monto);
         request.input('Id_Categoria', sql.Int, id_categoria);
         request.input('Descripcion', sql.VarChar, descripcion || null);
-        request.input('TipoMovimiento', sql.VarChar, tipo || 'Egreso');
+        request.input('TipoMovimiento', sql.VarChar, tipomovimiento);
 
         const insertResult = await request.query(`
-      INSERT INTO Movimiento (Id_Saldo, Id_Categoria, TipoMovimiento, Monto, Descripcion)
-      OUTPUT INSERTED.*
-      VALUES (@Id_Saldo, @Id_Categoria, @TipoMovimiento, @Monto, @Descripcion)
-    `);
+            INSERT INTO Movimiento (Id_Saldo, Id_Categoria, TipoMovimiento, Monto, Descripcion)
+            OUTPUT INSERTED.*
+            VALUES (@Id_Saldo, @Id_Categoria, @TipoMovimiento, @Monto, @Descripcion)
+        `);
 
         const updateRequest = new sql.Request(transaction);
         updateRequest.input('Id_Saldo', sql.Int, data[0].Id_Saldo);
         updateRequest.input('Monto', sql.Decimal(10, 2), monto);
 
-        await updateRequest.query(`
-      UPDATE Saldo
-      SET Monto = Monto - @Monto
-      WHERE Id_Saldo = @Id_Saldo
-    `);
+        if (tipomovimiento === 'Ingreso') {
+            await updateRequest.query(`
+                UPDATE Saldo
+                SET Monto = Monto + @Monto
+                WHERE Id_Saldo = @Id_Saldo
+            `);
+        } else if (tipomovimiento === 'Egreso') {
+            if (monto > saldoActual) {
+                throw new Error('No hay suficiente saldo');
+            }
+            await updateRequest.query(`
+                UPDATE Saldo
+                SET Monto = Monto - @Monto
+                WHERE Id_Saldo = @Id_Saldo
+            `);
+        }
 
         await transaction.commit();
-
         return insertResult.recordset[0];
+
     } catch (err) {
-        await transaction.rollback();
+        try {
+            await transaction.rollback(); // rollback solo si se inició correctamente
+        } catch (rollbackErr) {
+            console.error('Error al hacer rollback:', rollbackErr.message);
+        }
+
         console.error('Error en createExpense:', err);
         throw new Error('No se pudo registrar el gasto');
     }
 };
+
 
 
 const GetSaldo = async (id) => {

@@ -7,7 +7,6 @@ const createExpense = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const expenseData = req.body;
-
         const result = await expensesService.createExpense(userId, expenseData);
 
         res.status(201).json({
