@@ -18,10 +18,10 @@ const createExpense = async (Id_Usuario, expenseData) => {
         throw new Error('El monto debe ser un número positivo');
     }
 
-    const transaction = new sql.Transaction(pool); // ✅ importante
+    const transaction = new sql.Transaction(pool);
 
     try {
-        await transaction.begin(); // ✅ se inicia antes de todo
+        await transaction.begin();
 
         const request = new sql.Request(transaction);
         request.input('Id_Saldo', sql.Int, data[0].Id_Saldo);
