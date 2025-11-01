@@ -85,12 +85,12 @@ const GetSaldo = async (id) => {
 /* Obtener gastos */
 const getExpenses = async (Id_Usuario, filters = {}) => {
 
-    const { saldo, monto } = await GetSaldo(Id_Usuario);
+    const data = await GetSaldo(Id_Usuario);
     const pool = getPool();
 
     let query = `SELECT Id_Movimiento, Id_Categoria, TipoMovimiento, Monto, Descripcion, FechaMovimiento
         FROM Movimiento WHERE TipoMovimiento = 'Egreso' and Id_Saldo = @Id_Saldo ORDER BY FechaMovimiento DESC `;
-    const request = pool.request().input('Id_Saldo', sql.Int, saldo[0].Id_Saldo);
+    const request = pool.request().input('Id_Saldo', sql.Int, data[0].Id_Saldo);
 
     const result = await request.query(query);
     return result.recordset;
@@ -141,25 +141,30 @@ const deleteExpense = async (userId, expenseId) => {
  */
 const getExpenseStats = async (userId, period = 'monthly') => {
     const pool = getPool();
-
+    const data = await GetSaldo(Id_Usuario);
     // Implementar lógica según el período
     const result = await pool
         .request()
-        .input('userId', sql.Int, userId)
+        .input('Id_Saldo', sql.Int, data[0].Id_Saldo)
         .query(`
       SELECT 
         categoria,
         SUM(monto) as total,
         COUNT(*) as cantidad
-      FROM gastos
-      WHERE usuario_id = @userId
-        AND fecha >= DATEADD(month, -1, GETDATE())
+      FROM Movimiento
+      WHERE Id_Saldo = @Id_Saldo
+        AND FechaMovimiento >= DATEADD(month, -1, GETDATE())
       GROUP BY categoria
       ORDER BY total DESC
     `);
 
     return result.recordset;
 };
+
+
+const getMovmentsOrganization = (Id_Organizacion) =>{
+    
+}
 
 module.exports = {
     createExpense,
