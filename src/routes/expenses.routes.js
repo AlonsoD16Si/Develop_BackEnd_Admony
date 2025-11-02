@@ -18,7 +18,7 @@ router.post(
     [
         body('monto').isFloat({ min: 0 }).withMessage('El monto debe ser un número positivo'),
         body('id_categoria').notEmpty().withMessage('La categoría es requerida'),
-        body('id_saldo').notEmpty().withMessage('El saldo es requerido para vincular a usuario'),
+        body('id_usuario').notEmpty().withMessage('El saldo es requerido para vincular a usuario'),
         body('tipomovimiento').optional().isIn(['Ingreso','Egreso','Domiciliacion']).withMessage('Tipo inválido'),
         validate,
     ],
@@ -39,6 +39,16 @@ router.get(
         validate,
     ],
     expensesController.getExpenses
+);
+router.get(
+    '/ingresos',
+    [
+        query('startDate').optional().isISO8601().withMessage('Fecha de inicio inválida'),
+        query('endDate').optional().isISO8601().withMessage('Fecha de fin inválida'),
+        query('category').optional().isString(),
+        validate,
+    ],
+    expensesController.getIngresos
 );
 
 /**

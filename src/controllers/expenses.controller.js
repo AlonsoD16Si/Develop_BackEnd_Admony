@@ -37,6 +37,22 @@ const getExpenses = async (req, res, next) => {
         next(error);
     }
 };
+const getIngresos = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        console.log(req)
+        const { startDate, endDate, category } = req.query;
+
+        const expenses = await expensesService.getIngresos(userId, { startDate, endDate, category });
+
+        res.status(200).json({
+            success: true,
+            data: expenses,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 
 /**
  * Obtener un gasto específico
@@ -123,5 +139,6 @@ module.exports = {
     updateExpense,
     deleteExpense,
     getExpenseStats,
+    getIngresos
 };
 

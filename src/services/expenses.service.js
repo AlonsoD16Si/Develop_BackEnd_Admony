@@ -6,6 +6,7 @@ const { getPool, sql } = require('../config/database');
 const createExpense = async (Id_Usuario, expenseData) => {
     const pool = getPool();
     const data = await GetSaldo(Id_Usuario);
+    console.log(data, Id_Usuario)
     const { monto, id_categoria, descripcion, tipomovimiento } = expenseData;
 
     if (!data || data.length === 0) {
@@ -93,6 +94,21 @@ const getExpenses = async (Id_Usuario, filters = {}) => {
     const request = pool.request().input('Id_Saldo', sql.Int, data[0].Id_Saldo);
 
     const result = await request.query(query);
+    console.log(result)
+    return result.recordset;
+};
+
+
+const getIngresos = async (Id_Usuario, filters = {}) => {
+
+    const data = await GetSaldo(Id_Usuario);
+    const pool = getPool();
+
+    let query = `SELECT Id_Movimiento, Id_Categoria, TipoMovimiento, Monto, Descripcion, FechaMovimiento
+        FROM Movimiento WHERE TipoMovimiento = 'Ingreso' and Id_Saldo = @Id_Saldo ORDER BY FechaMovimiento DESC `;
+    const request = pool.request().input('Id_Saldo', sql.Int, data[0].Id_Saldo);
+
+    const result = await request.query(query);
     return result.recordset;
 };
 
@@ -172,5 +188,6 @@ module.exports = {
     getExpenseById,
     deleteExpense,
     getExpenseStats,
+    getIngresos
 };
 
