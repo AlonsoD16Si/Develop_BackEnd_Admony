@@ -43,12 +43,23 @@ router.get(
 router.get(
     '/ingresos',
     [
-        query('startDate').optional().isISO8601().withMessage('Fecha de inicio inválida'),
-        query('endDate').optional().isISO8601().withMessage('Fecha de fin inválida'),
-        query('category').optional().isString(),
         validate,
     ],
     expensesController.getIngresos
+);
+router.get(
+    '/organization',
+    [
+        validate,
+    ],
+    expensesController.getMovmentsOrganization
+);
+router.get(
+    '/organizationMontos',
+    [
+        validate,
+    ],
+    expensesController.getMontosOrganization
 );
 
 /**
