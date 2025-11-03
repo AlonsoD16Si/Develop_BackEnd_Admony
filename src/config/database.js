@@ -1,44 +1,42 @@
+require('dotenv').config();
 const sql = require('mssql');
 
+const hasInstance = !!process.env.DB_INSTANCE;
+
 const config = {
+    server: process.env.DB_SERVER || '127.0.0.1',
+    database: process.env.DB_NAME,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER,
-    database: process.env.DB_NAME,
+    ...(hasInstance ? {} : { port: Number(process.env.DB_PORT || 1433) }),
     options: {
-        encrypt: true,
-        trustServerCertificate: process.env.NODE_ENV === 'development',
+        encrypt: (process.env.DB_ENCRYPT || 'false') === 'true',
+        trustServerCertificate: true,
+        ...(hasInstance ? { instanceName: process.env.DB_INSTANCE } : {}),
     },
-    pool: {
-        max: 10,
-        min: 0,
-        idleTimeoutMillis: 30000,
-    },
+    pool: { max: 10, min: 0, idleTimeoutMillis: 30000 },
 };
 
-let pool;
+let poolPromise;
 
-const connectDB = async () => {
-    try {
-        pool = await sql.connect(config);
-        console.log('✅ Conexión exitosa a SQL Server');
-        return pool;
-    } catch (error) {
-        console.error('❌ Error al conectar con SQL Server:', error);
-        process.exit(1);
-    }
-};
-
-const getPool = () => {
-    if (!pool) {
-        throw new Error('La conexión a la base de datos no ha sido inicializada');
-    }
+async function connectDB() {
+    if (!poolPromise) poolPromise = sql.connect(config);
+    const pool = await poolPromise;
+    await pool.request().query('SELECT 1');
+    console.log('✅ Conectado a SQL Server:', {
+        server: config.server,
+        database: config.database,
+        instance: process.env.DB_INSTANCE || null,
+        port: config.port || null,
+        encrypt: config.options.encrypt,
+        tsc: config.options.trustServerCertificate,
+    });
     return pool;
-};
+}
 
-module.exports = {
-    connectDB,
-    getPool,
-    sql,
-};
+function getPool() {
+    if (!poolPromise) poolPromise = sql.connect(config);
+    return poolPromise;
+}
 
+module.exports = { connectDB, getPool, sql };

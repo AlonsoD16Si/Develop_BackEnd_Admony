@@ -18,7 +18,6 @@ router.post(
             .isLength({ min: 6 })
             .withMessage('La contraseña debe tener al menos 6 caracteres'),
         body('nombre').notEmpty().withMessage('El nombre es requerido'),
-        body('apellido').notEmpty().withMessage('El apellido es requerido'),
         validate,
     ],
     authController.register

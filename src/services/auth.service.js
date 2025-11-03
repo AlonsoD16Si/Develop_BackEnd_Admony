@@ -166,3 +166,139 @@ module.exports = {
     resetPassword,
 };
 
+// const bcrypt = require('bcryptjs');
+// const jwt = require('jsonwebtoken');
+// const { getPool, sql } = require('../config/database');
+
+// const JWT_SECRET = process.env.JWT_SECRET;
+// const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+
+// function signToken(payload) {
+//     return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+// }
+
+// /**
+//  * Register: crea Usuario con pass hasheada y Saldo=0
+//  */
+// async function register({ email, password, nombre, apellido }) {
+//     const pool = await getPool();
+
+//     const correo = String(email).trim().toLowerCase();
+//     const nombreCompleto = [nombre, apellido].filter(Boolean).join(' ').trim();
+
+//     ¿correo ya existe?
+//     const exists = await pool.request()
+//         .input('correo', sql.NVarChar, correo)
+//         .query(`SELECT 1 FROM Usuario WHERE Correo = @correo`);
+//     if (exists.recordset.length > 0) {
+//         const e = new Error('El correo ya está registrado'); e.statusCode = 409; throw e;
+//     }
+
+//     const hash = await bcrypt.hash(password, 10);
+
+//     const tx = new sql.Transaction(pool);
+//     await tx.begin();
+//     try {
+//         const req = new sql.Request(tx);
+
+//         const insUser = await req
+//             .input('correo', sql.NVarChar, correo)
+//             .input('contrasenia', sql.NVarChar, hash)
+//             .input('nombre', sql.NVarChar, nombreCompleto)
+//             .query(`
+//         INSERT INTO Usuario (Id_Organizacion, Rol, Nombre, Correo, Contrasenia, Estatus)
+//         OUTPUT INSERTED.Id_Usuario
+//         VALUES (NULL, 'Usuario', @nombre, @correo, @contrasenia, 1)
+//       `);
+
+//         const userId = insUser.recordset[0].Id_Usuario;
+
+//         await new sql.Request(tx)
+//             .input('idUsuario', sql.Int, userId)
+//             .query(`
+//         INSERT INTO Saldo (Id_Usuario, Monto)
+//         VALUES (@idUsuario, 0.00)
+//       `);
+
+//         await tx.commit();
+
+//         const token = signToken({ id: userId, correo });
+//         return {
+//             token,
+//             user: { id: userId, correo, nombre: nombreCompleto, rol: 'Usuario' }
+//         };
+//     } catch (err) {
+//         try { await tx.rollback(); } catch { }
+//         throw err;
+//     }
+// }
+
+// /**
+//  * Login: compara bcrypt y devuelve token + user
+//  */
+// async function login({ correo, constrasenia }) {
+//     if (!JWT_SECRET) {
+//         const e = new Error('JWT_SECRET no definido'); e.statusCode = 500; throw e;
+//     }
+
+//     const pool = await getPool();
+//     const rs = await pool.request()
+//         .input('correo', sql.NVarChar, String(correo).trim().toLowerCase())
+//         .query(`
+//       SELECT Id_Usuario, Correo, Contrasenia, Rol, Nombre, Estatus
+//       FROM Usuario
+//       WHERE Correo = @correo
+//     `);
+
+//     const u = rs.recordset[0];
+//     if (!u || u.Estatus !== true && u.Estatus !== 1) {
+//         const e = new Error('Credenciales inválidas'); e.statusCode = 401; throw e;
+//     }
+
+//     const ok = await bcrypt.compare(constrasenia, u.Contrasenia);
+//     if (!ok) {
+//         const e = new Error('Credenciales inválidas'); e.statusCode = 401; throw e;
+//     }
+
+//     const token = signToken({ id: u.Id_Usuario, correo: u.Correo, role: u.Rol });
+//     return {
+//         token,
+//         user: { id: u.Id_Usuario, correo: u.Correo, nombre: u.Nombre, rol: u.Rol }
+//     };
+// }
+
+// /**
+//  * Perfil
+//  */
+// async function getProfile(userId) {
+//     const pool = await getPool();
+//     const rs = await pool.request()
+//         .input('id', sql.Int, userId)
+//         .query(`
+//       SELECT Id_Usuario AS id, Correo AS correo, Nombre AS nombre, Rol AS rol, Estatus
+//       FROM Usuario
+//       WHERE Id_Usuario = @id
+//     `);
+//     if (!rs.recordset[0]) {
+//         const e = new Error('Usuario no encontrado'); e.statusCode = 404; throw e;
+//     }
+//     return rs.recordset[0];
+// }
+
+// /**
+//  * (Opcional) Password reset – deja placeholders si aún no lo implementas
+//  */
+// async function requestPasswordReset(/* email */) {
+//     const e = new Error('requestPasswordReset no implementado'); e.statusCode = 501; throw e;
+// }
+// async function resetPassword(/* token, newPassword */) {
+//     const e = new Error('resetPassword no implementado'); e.statusCode = 501; throw e;
+// }
+
+// module.exports = {
+//     register,
+//     login,
+//     getProfile,
+//     requestPasswordReset,
+//     resetPassword,
+// };
