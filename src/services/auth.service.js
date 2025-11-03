@@ -61,7 +61,7 @@ const register = async ({ email, password, nombre, apellido }) => {
 /**
  * Iniciar sesión
  */
-const login = async ({ correo, constrasenia}) => {
+const login = async ({ correo, constrasenia }) => {
     const pool = getPool();
 
     // Buscar usuario

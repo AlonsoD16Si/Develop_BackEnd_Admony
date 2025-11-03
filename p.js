@@ -4,9 +4,9 @@ const bcrypt = require('bcryptjs');
 //Modifiquen la contraseña.
 // Corran "node p.js" en la terminal y copien la respuesta en el insert de la db
 
-const hashedPassword = async ()=>{
+const hashedPassword = async () => {
     pa = await bcrypt.hash('password123', 10)
     console.log(pa)
 }
 
-hashedPassword();
+hashedPassword();   
