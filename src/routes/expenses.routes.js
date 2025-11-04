@@ -13,19 +13,16 @@ const { body, param, query } = require('express-validator');
  * @access  Private
  */
 router.post(
-    '/',
-    authenticateToken,
-    [
-        body('monto').isFloat({ min: 0 }).withMessage('El monto debe ser un número positivo'),
-        body('id_categoria').notEmpty().withMessage('La categoría es requerida'),
-        body('id_usuario').notEmpty().withMessage('El saldo es requerido para vincular a usuario'),
-        body('tipomovimiento').optional().isIn(['Ingreso','Egreso','Domiciliacion']).withMessage('Tipo inválido'),
-        body('id_categoria').notEmpty().withMessage('La categoría es requerida'),
-        body('id_usuario').notEmpty().withMessage('El saldo es requerido para vincular a usuario'),
-        body('tipomovimiento').optional().isIn(['Ingreso','Egreso','Domiciliacion']).withMessage('Tipo inválido'),
-        validate,
-    ],
-    expensesController.createExpense
+  '/',
+  authenticateToken,
+  [
+    body('monto').isFloat({ min: 0 }).withMessage('El monto debe ser un número positivo'),
+    body('id_categoria').notEmpty().withMessage('La categoría es requerida'),
+    body('id_usuario').notEmpty().withMessage('El saldo es requerido para vincular a usuario'),
+    body('tipomovimiento').optional().isIn(['Ingreso', 'Egreso', 'Domiciliacion']).withMessage('Tipo inválido'),
+    validate,
+  ],
+  expensesController.createExpense
 );
 
 /**
@@ -34,19 +31,37 @@ router.post(
  * @access  Private
  */
 router.get(
-    '/',
-    authenticateToken,
-    [
-        query('startDate').optional().isISO8601().withMessage('Fecha de inicio inválida'),
-        query('endDate').optional().isISO8601().withMessage('Fecha de fin inválida'),
-        query('category').optional().isString(),
-        validate,
-    ],
-    expensesController.getExpenses
+  '/',
+  authenticateToken,
+  [
+    query('startDate').optional().isISO8601().withMessage('Fecha de inicio inválida'),
+    query('endDate').optional().isISO8601().withMessage('Fecha de fin inválida'),
+    query('category').optional().isString(),
+    validate,
+  ],
+  expensesController.getExpenses
 );
-router.get('/ingresos', [validate], expensesController.getIngresos);
-router.get('/organization', [validate], expensesController.getMovmentsOrganization);
-router.get('/organizationMontos', [validate], expensesController.getMontosOrganization);
+router.get(
+  '/ingresos',
+  [
+    validate,
+  ],
+  expensesController.getIngresos
+);
+router.get(
+  '/organization',
+  [
+    validate,
+  ],
+  expensesController.getMovmentsOrganization
+);
+router.get(
+  '/organizationMontos',
+  [
+    validate,
+  ],
+  expensesController.getMontosOrganization
+);
 
 /**
  * @route   GET /api/expenses/stats
@@ -82,10 +97,7 @@ router.put(
   '/:id',
   [
     param('id').isInt().withMessage('ID inválido'),
-    body('monto')
-      .optional()
-      .isFloat({ min: 0 })
-      .withMessage('El monto debe ser un número positivo'),
+    body('monto').optional().isFloat({ min: 0 }).withMessage('El monto debe ser un número positivo'),
     body('categoria').optional().notEmpty().withMessage('La categoría no puede estar vacía'),
     body('tipo').optional().isIn(['unico', 'recurrente']).withMessage('Tipo inválido'),
     body('fecha').optional().isISO8601().withMessage('Fecha inválida'),

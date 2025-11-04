@@ -1,18 +1,9 @@
 const jwt = require('jsonwebtoken');
-const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: 'Token no proporcionado',
-    });
-  }
   if (!token) {
     return res.status(401).json({
       success: false,
@@ -41,21 +32,6 @@ const isAdmin = (req, res, next) => {
     });
   }
   next();
-
-  req.user = user;
-  next();
-});
 };
 
-const isAdmin = (req, res, next) => {
-  if (req.user.Rol !== 'Administrador') {
-    return res.status(403).json({
-      success: false,
-      message: 'Acceso denegado. Se requiere rol de Administrador',
-    });
-  }
-  next();
-};
-
-module.exports = { authenticateToken, isAdmin };
 module.exports = { authenticateToken, isAdmin };
