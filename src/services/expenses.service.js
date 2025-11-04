@@ -6,6 +6,7 @@ const { getPool, sql } = require('../config/database');
 const createExpense = async (Id_Usuario, expenseData) => {
     const pool = getPool();
     const data = await GetSaldo(Id_Usuario);
+    console.log(data, Id_Usuario)
     const { monto, id_categoria, descripcion, tipomovimiento } = expenseData;
 
     if (!data || data.length === 0) {
@@ -93,6 +94,21 @@ const getExpenses = async (Id_Usuario, filters = {}) => {
     const request = pool.request().input('Id_Saldo', sql.Int, data[0].Id_Saldo);
 
     const result = await request.query(query);
+    console.log(result)
+    return result.recordset;
+};
+
+
+const getIngresos = async (Id_Usuario, filters = {}) => {
+
+    const data = await GetSaldo(Id_Usuario);
+    const pool = getPool();
+
+    let query = `SELECT Id_Movimiento, Id_Categoria, TipoMovimiento, Monto, Descripcion, FechaMovimiento
+        FROM Movimiento WHERE TipoMovimiento = 'Ingreso' and Id_Saldo = @Id_Saldo ORDER BY FechaMovimiento DESC `;
+    const request = pool.request().input('Id_Saldo', sql.Int, data[0].Id_Saldo);
+
+    const result = await request.query(query);
     return result.recordset;
 };
 
@@ -161,10 +177,61 @@ const getExpenseStats = async (userId, period = 'monthly') => {
     return result.recordset;
 };
 
-
-const getMovmentsOrganization = (Id_Organizacion) =>{
-    
+const GetOrgaId = async (id) => {
+    const pool = getPool();
+    let query = `SELECT Id_Organizacion FROM Usuario WHERE Id_Usuario = @Id_Usuario`;
+    const request = pool.request().input('Id_Usuario', sql.Int, id);
+    const result = await request.query(query);
+    return result.recordset;
 }
+const GetUserIdByOrga = async (id) => {
+    const pool = getPool();
+    let query = `SELECT Id_Usuario FROM Usuario WHERE Id_Organizacion = @Id_Organizacion`;
+    const request = pool.request().input('Id_Organizacion', sql.Int, id);
+    const result = await request.query(query);
+    return result.recordset;
+}
+
+const getMovmentsOrganization = async(Id_Usuario) =>{
+    const pool = getPool();
+    let result = [];
+    const id_org = await GetOrgaId(Id_Usuario);
+    const users = await GetUserIdByOrga(id_org[0].Id_Organizacion);
+    try {
+        for(us in users){
+            const saldo = await GetSaldo(users[us].Id_Usuario);
+            let query = `SELECT * FROM  Movimiento WHERE Id_Saldo = @Id_Saldo`
+            const req = pool.request().input('Id_Saldo', sql.Int, saldo[0].Id_Saldo);
+            const fin = await req.query(query)
+            result.push(fin.recordset)
+        }
+
+        return result
+    } catch (error) {
+        console.error('Error en createExpense:', error);
+        throw new Error('No se pudo traer la información de la organización');
+    }
+}
+
+const getMontosOrganization = async(Id_Usuario) =>{
+    const pool = getPool();
+    let result = [];
+    const id_org = await GetOrgaId(Id_Usuario);
+    const users = await GetUserIdByOrga(id_org[0].Id_Organizacion);
+    try {
+        for(us in users){
+            const saldo = await GetSaldo(users[us].Id_Usuario);
+            result.push(saldo[0].monto)
+        }
+
+        return result
+    } catch (error) {
+        console.error('Error en createExpense:', error);
+        throw new Error('No se pudo traer la información de la organización');
+    }
+}
+
+
 
 module.exports = {
     createExpense,
@@ -172,5 +239,8 @@ module.exports = {
     getExpenseById,
     deleteExpense,
     getExpenseStats,
+    getIngresos,
+    getMovmentsOrganization,
+    getMontosOrganization
 };
 
