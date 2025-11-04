@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const expensesController = require('../controllers/expenses.controller');
-const { authenticateToken } = require('../middlewares/auth.middleware');
+const { authenticateToken, isAdmin } = require('../middlewares/auth.middleware');
 const validate = require('../middlewares/validator.middleware');
 const { body, param, query } = require('express-validator');
 
 // Todas las rutas requieren autenticación
-router.use(authenticateToken);
 
 /**
  * @route   POST /api/expenses
@@ -15,6 +14,7 @@ router.use(authenticateToken);
  */
 router.post(
     '/',
+    authenticateToken,
     [
         body('monto').isFloat({ min: 0 }).withMessage('El monto debe ser un número positivo'),
         body('id_categoria').notEmpty().withMessage('La categoría es requerida'),
@@ -32,6 +32,7 @@ router.post(
  */
 router.get(
     '/',
+    authenticateToken,
     [
         query('startDate').optional().isISO8601().withMessage('Fecha de inicio inválida'),
         query('endDate').optional().isISO8601().withMessage('Fecha de fin inválida'),

@@ -15,7 +15,7 @@ const authenticateToken = (req, res, next) => {
     if (err) {
       return res.status(403).json({
         success: false,
-        message: 'Token inválido o expirado',
+        message: err,
       });
     }
 
