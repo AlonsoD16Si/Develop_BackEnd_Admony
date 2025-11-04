@@ -4,10 +4,10 @@ const expensesService = require('../services/expenses.service');
  * Crear un nuevo gasto
  */
 const createExpense = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    const expenseData = req.body;
-    const result = await expensesService.createExpense(userId, expenseData);
+    try {
+        const userId = req.user.Id_Usuario;
+        const expenseData = req.body;
+        const result = await expensesService.createExpense(userId, expenseData);
 
     res.status(201).json({
       success: true,
@@ -23,9 +23,9 @@ const createExpense = async (req, res, next) => {
  * Obtener todos los gastos del usuario
  */
 const getExpenses = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    const { startDate, endDate, category } = req.query;
+    try {
+        const userId = req.user.Id_Usuario;
+        const { startDate, endDate, category } = req.query;
 
     const expenses = await expensesService.getExpenses(userId, { startDate, endDate, category });
 
@@ -38,9 +38,9 @@ const getExpenses = async (req, res, next) => {
   }
 };
 const getIngresos = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    const { startDate, endDate, category } = req.query;
+    try {
+        const userId = req.user.Id_Usuario;
+        const { startDate, endDate, category } = req.query;
 
     const expenses = await expensesService.getIngresos(userId, { startDate, endDate, category });
 
@@ -54,8 +54,8 @@ const getIngresos = async (req, res, next) => {
 };
 
 const getMovmentsOrganization = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
+    try {
+        const userId = req.user.Id_Usuario;
 
     const expenses = await expensesService.getMovmentsOrganization(userId);
 
@@ -68,8 +68,8 @@ const getMovmentsOrganization = async (req, res, next) => {
   }
 };
 const getMontosOrganization = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
+    try {
+        const userId = req.user.Id_Usuario;
 
     const expenses = await expensesService.getMontosOrganization(userId);
 

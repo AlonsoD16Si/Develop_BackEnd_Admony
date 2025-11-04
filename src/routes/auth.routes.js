@@ -13,12 +13,21 @@ const { body } = require('express-validator');
 router.post(
   '/register',
   [
-    body('email').isEmail().withMessage('Email inválido'),
-    body('password')
-      .isLength({ min: 6 })
-      .withMessage('La contraseña debe tener al menos 6 caracteres'),
-    body('nombre').notEmpty().withMessage('El nombre es requerido'),
-    body('apellido').notEmpty().withMessage('El apellido es requerido'),
+    body('correo')
+      .isEmail()
+      .withMessage('Correo inválido')
+      .normalizeEmail(),
+    body('contrasenia')
+      .isLength({ min: 8 })
+      .withMessage('La contraseña debe tener al menos 8 caracteres')
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
+      .withMessage('La contraseña debe contener al menos: una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)'),
+    body('nombre')
+      .notEmpty()
+      .withMessage('El nombre es requerido')
+      .isLength({ min: 3 })
+      .withMessage('El nombre debe tener al menos 3 caracteres')
+      .trim(),
     validate,
   ],
   authController.register
@@ -32,8 +41,13 @@ router.post(
 router.post(
   '/login',
   [
-    body('correo').isEmail().withMessage('Email inválido'),
-    body('constrasenia').notEmpty().withMessage('La contraseña es requerida'),
+    body('correo')
+      .isEmail()
+      .withMessage('Email inválido')
+      .normalizeEmail(),
+    body('contrasenia')
+      .notEmpty()
+      .withMessage('La contraseña es requerida'),
     validate,
   ],
   authController.login
@@ -53,7 +67,13 @@ router.get('/profile', authenticateToken, authController.getProfile);
  */
 router.post(
   '/request-password-reset',
-  [body('email').isEmail().withMessage('Email inválido'), validate],
+  [
+    body('correo')
+      .isEmail()
+      .withMessage('Correo inválido')
+      .normalizeEmail(),
+    validate,
+  ],
   authController.requestPasswordReset
 );
 
@@ -65,10 +85,14 @@ router.post(
 router.post(
   '/reset-password',
   [
-    body('token').notEmpty().withMessage('Token requerido'),
+    body('token')
+      .notEmpty()
+      .withMessage('Token requerido'),
     body('newPassword')
-      .isLength({ min: 6 })
-      .withMessage('La contraseña debe tener al menos 6 caracteres'),
+      .isLength({ min: 8 })
+      .withMessage('La contraseña debe tener al menos 8 caracteres')
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
+      .withMessage('La contraseña debe contener al menos: una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)'),
     validate,
   ],
   authController.resetPassword

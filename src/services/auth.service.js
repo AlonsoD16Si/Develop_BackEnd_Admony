@@ -5,69 +5,68 @@ const { generateToken } = require('../config/jwt');
 /**
  * Registrar un nuevo usuario
  */
-const register = async ({ correo, password, nombre, apellido }) => {
-  const pool = getPool();
+const register = async ({ correo, contrasenia, nombre}) => {
+    const pool = getPool();
 
-  // Verificar si el usuario ya existe
-  const existingUser = await pool
-    .request()
-    .input('correo', sql.VarChar, correo)
-    .query('SELECT id FROM usuario WHERE correo = @correo');
+    // Verificar si el usuario ya existe
+    const existingUser = await pool
+        .request()
+        .input('correo', sql.VarChar, correo)
+        .query('SELECT id_usuario FROM Usuario WHERE correo = @correo');
 
-  if (existingUser.recordset.length > 0) {
-    const error = new Error('El correo ya está registrado');
-    error.statusCode = 400;
-    throw error;
-  }
+    if (existingUser.recordset.length > 0) {
+        const error = new Error('El correo ya está registrado');
+        error.statusCode = 400;
+        throw error;
+    }
 
-  // Encriptar contraseña
-  const hashedPassword = await bcrypt.hash(password, 10);
+    // Encriptar contraseña
+    const hashedPassword = await bcrypt.hash(contrasenia, 10);
 
-  // Insertar usuario
-  const result = await pool
-    .request()
-    .input('correo', sql.VarChar, correo)
-    .input('contrasenia', sql.VarChar, hashedPassword)
-    .input('nombre', sql.VarChar, nombre)
-    .input('apellido', sql.VarChar, apellido)
-    .input('rol', sql.VarChar, 'usuario').query(`
-      INSERT INTO usuario (correo, contrasenia, nombre, rol)
-      OUTPUT INSERTED.id, INSERTED.correo, INSERTED.nombre, INSERTED.rol
-      VALUES (@correo, @contrasenia, @nombre, @rol)
+    // Insertar usuario
+    const result = await pool
+        .request()
+        .input('correo', sql.VarChar, correo)
+        .input('contrasenia', sql.VarChar, hashedPassword)
+        .input('nombre', sql.VarChar, nombre)
+        .input('rol', sql.VarChar, 'usuario')
+        .query(`
+      INSERT INTO usuario (correo, contrasenia, nombre, rol, Estatus)
+      OUTPUT INSERTED.id_usuario, INSERTED.correo, INSERTED.nombre, INSERTED.rol
+      VALUES (@correo, @contrasenia, @nombre, @rol, 1)
     `);
 
   const user = result.recordset[0];
 
-  // Generar token
-  const token = generateToken({
-    id_usuario: user.id_usuario,
-    correo: user.correo,
-    rol: user.rol,
-  });
+    // Generar token
+    const token = generateToken({
+        Id_Usuario: user.Id_Usuario,
+        Correo: user.Correo,
+        Rol: user.Rol,
+    });
 
-  return {
-    user: {
-      id_usuario: user.id_usuario,
-      correo: user.correo,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      rol: user.rol,
-    },
-    token,
-  };
+    return {
+        user: {
+            Id_Usuario: user.Id_Usuario,
+            Correo: user.Correo,
+            Nombre: user.Nombre,
+            Rol: user.Rol,
+        },
+        token,
+    };
 };
 
 /**
  * Iniciar sesión
  */
-const login = async ({ correo, constrasenia }) => {
-  const pool = getPool();
+const login = async ({ correo, contrasenia}) => {
+    const pool = getPool();
 
-  // Buscar usuario
-  const result = await pool
-    .request()
-    .input('correo', sql.VarChar, correo)
-    .query('SELECT * FROM usuario WHERE correo = @correo');
+    // Buscar usuario
+    const result = await pool
+        .request()
+        .input('correo', sql.VarChar, correo)
+        .query('SELECT * FROM Usuario WHERE correo = @correo');
 
   if (result.recordset.length === 0) {
     const error = new Error('Credenciales inválidas');
@@ -77,8 +76,8 @@ const login = async ({ correo, constrasenia }) => {
 
   const user = result.recordset[0];
 
-  // Verificar contraseña
-  const isPasswordValid = await bcrypt.compare(constrasenia, user.Contrasenia);
+    // Verificar contraseña
+    const isPasswordValid = await bcrypt.compare(contrasenia, user.Contrasenia);
 
   if (!isPasswordValid) {
     const error = new Error('Credenciales inválidas');
@@ -86,35 +85,34 @@ const login = async ({ correo, constrasenia }) => {
     throw error;
   }
 
-  // Generar token
-  const token = generateToken({
-    id: user.Id_Usuario,
-    email: user.Correo,
-    role: user.Rol,
-  });
+    // Generar token
+    const token = generateToken({
+        Id_Usuario: user.Id_Usuario,
+        Correo: user.Correo,
+        Rol: user.Rol,
+    });
 
-  return {
-    user: {
-      id: user.id,
-      email: user.email,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      role: user.role,
-    },
-    token,
-  };
+    return {
+        user: {
+            Id_Usuario: user.Id_Usuario,
+            Correo: user.Correo,
+            Nombre: user.Nombre,
+            Rol: user.Rol,
+        },
+        token,
+    };
 };
 
 /**
  * Obtener perfil de usuario
  */
-const getProfile = async (userId) => {
-  const pool = getPool();
+const getProfile = async (Id_Usuario) => {
+    const pool = getPool();
 
-  const result = await pool
-    .request()
-    .input('userId', sql.Int, userId)
-    .query('SELECT id, email, nombre, apellido, role, created_at FROM usuarios WHERE id = @userId');
+    const result = await pool
+        .request()
+        .input('Id_Usuario', sql.Int, Id_Usuario)
+        .query('SELECT Id_Usuario, Correo, Nombre, Rol FROM Usuario WHERE Id_Usuario = @Id_Usuario');
 
   if (result.recordset.length === 0) {
     const error = new Error('Usuario no encontrado');
@@ -128,14 +126,14 @@ const getProfile = async (userId) => {
 /**
  * Solicitar recuperación de contraseña
  */
-const requestPasswordReset = async (email) => {
-  // TODO: Implementar lógica de envío de email con token de recuperación
-  const pool = getPool();
+const requestPasswordReset = async (correo) => {
+    // TODO: Implementar lógica de envío de email con token de recuperación
+    const pool = getPool();
 
-  const result = await pool
-    .request()
-    .input('email', sql.VarChar, email)
-    .query('SELECT id FROM usuarios WHERE email = @email');
+    const result = await pool
+        .request()
+        .input('correo', sql.VarChar, correo)
+        .query('SELECT Id_Usuario FROM Usuario WHERE Correo = @correo');
 
   if (result.recordset.length === 0) {
     // Por seguridad, no revelar si el email existe o no

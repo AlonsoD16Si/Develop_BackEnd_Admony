@@ -4,10 +4,10 @@ const authService = require('../services/auth.service');
  * Registro de nuevo usuario
  */
 const register = async (req, res, next) => {
-  try {
-    const { email, password, nombre, apellido } = req.body;
+    try {
+        const { correo, contrasenia, nombre} = req.body;
 
-    const result = await authService.register({ email, password, nombre, apellido });
+        const result = await authService.register({ correo, contrasenia, nombre});
 
     res.status(201).json({
       success: true,
@@ -23,10 +23,10 @@ const register = async (req, res, next) => {
  * Inicio de sesión
  */
 const login = async (req, res, next) => {
-  try {
-    const { correo, constrasenia } = req.body;
+    try {
+        const { correo, contrasenia } = req.body;
 
-    const result = await authService.login({ correo, constrasenia });
+        const result = await authService.login({ correo, contrasenia });
 
     res.status(200).json({
       success: true,
@@ -42,10 +42,10 @@ const login = async (req, res, next) => {
  * Obtener perfil del usuario autenticado
  */
 const getProfile = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
+    try {
+        const Id_Usuario = req.user.Id_Usuario;
 
-    const profile = await authService.getProfile(userId);
+        const profile = await authService.getProfile(Id_Usuario);
 
     res.status(200).json({
       success: true,
@@ -60,10 +60,10 @@ const getProfile = async (req, res, next) => {
  * Solicitar recuperación de contraseña
  */
 const requestPasswordReset = async (req, res, next) => {
-  try {
-    const { email } = req.body;
+    try {
+        const { correo } = req.body;
 
-    await authService.requestPasswordReset(email);
+        await authService.requestPasswordReset(correo);
 
     res.status(200).json({
       success: true,

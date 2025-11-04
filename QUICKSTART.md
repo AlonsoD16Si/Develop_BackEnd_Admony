@@ -39,7 +39,7 @@ PORT=3000
 DB_USER=tu_usuario
 DB_PASSWORD=tu_contraseña
 DB_SERVER=localhost
-DB_NAME=admony_db
+DB_NAME=Addmony
 
 JWT_SECRET=mi_clave_secreta_super_segura
 JWT_EXPIRES_IN=7d
@@ -51,7 +51,7 @@ Abre SQL Server Management Studio (SSMS) o Azure Data Studio y ejecuta:
 
 ```sql
 -- Crear la base de datos
-CREATE DATABASE admony_db;
+CREATE DATABASE Addmony;
 GO
 ```
 
@@ -84,7 +84,7 @@ Deberías recibir:
 ```json
 {
   "success": true,
-  "message": "API de AdmonY funcionando correctamente",
+  "message": "API de AddmonY funcionando correctamente",
   "timestamp": "2025-10-13T..."
 }
 ```
