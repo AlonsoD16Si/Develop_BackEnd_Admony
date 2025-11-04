@@ -9,10 +9,10 @@
  * @returns {string} Cantidad formateada
  */
 const formatCurrency = (amount, currency = 'USD') => {
-    return new Intl.NumberFormat('es-MX', {
-        style: 'currency',
-        currency: currency,
-    }).format(amount);
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: currency,
+  }).format(amount);
 };
 
 /**
@@ -22,11 +22,11 @@ const formatCurrency = (amount, currency = 'USD') => {
  * @returns {string} Fecha formateada
  */
 const formatDate = (date, locale = 'es-MX') => {
-    return new Intl.DateTimeFormat(locale, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    }).format(new Date(date));
+  return new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(date));
 };
 
 /**
@@ -36,8 +36,8 @@ const formatDate = (date, locale = 'es-MX') => {
  * @returns {number} Porcentaje
  */
 const calculatePercentage = (part, total) => {
-    if (total === 0) return 0;
-    return (part / total) * 100;
+  if (total === 0) return 0;
+  return (part / total) * 100;
 };
 
 /**
@@ -46,12 +46,12 @@ const calculatePercentage = (part, total) => {
  * @returns {string} Código generado
  */
 const generateRandomCode = (length = 6) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let code = '';
-    for (let i = 0; i < length; i++) {
-        code += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return code;
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < length; i++) {
+    code += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return code;
 };
 
 /**
@@ -60,7 +60,7 @@ const generateRandomCode = (length = 6) => {
  * @returns {boolean} True si está en el futuro
  */
 const isFutureDate = (date) => {
-    return new Date(date) > new Date();
+  return new Date(date) > new Date();
 };
 
 /**
@@ -68,8 +68,8 @@ const isFutureDate = (date) => {
  * @returns {Date} Primer día del mes
  */
 const getFirstDayOfMonth = () => {
-    const date = new Date();
-    return new Date(date.getFullYear(), date.getMonth(), 1);
+  const date = new Date();
+  return new Date(date.getFullYear(), date.getMonth(), 1);
 };
 
 /**
@@ -77,8 +77,8 @@ const getFirstDayOfMonth = () => {
  * @returns {Date} Último día del mes
  */
 const getLastDayOfMonth = () => {
-    const date = new Date();
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
+  const date = new Date();
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
 };
 
 /**
@@ -87,7 +87,7 @@ const getLastDayOfMonth = () => {
  * @returns {string} String sanitizado
  */
 const sanitizeString = (str) => {
-    return str.trim().replace(/[<>]/g, '');
+  return str.trim().replace(/[<>]/g, '');
 };
 
 /**
@@ -96,8 +96,8 @@ const sanitizeString = (str) => {
  * @returns {boolean} True si es válido
  */
 const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 };
 
 /**
@@ -107,19 +107,18 @@ const isValidEmail = (email) => {
  * @returns {number} Número redondeado
  */
 const roundToDecimals = (num, decimals = 2) => {
-    return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
+  return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
 };
 
 module.exports = {
-    formatCurrency,
-    formatDate,
-    calculatePercentage,
-    generateRandomCode,
-    isFutureDate,
-    getFirstDayOfMonth,
-    getLastDayOfMonth,
-    sanitizeString,
-    isValidEmail,
-    roundToDecimals,
+  formatCurrency,
+  formatDate,
+  calculatePercentage,
+  generateRandomCode,
+  isFutureDate,
+  getFirstDayOfMonth,
+  getLastDayOfMonth,
+  sanitizeString,
+  isValidEmail,
+  roundToDecimals,
 };
-

@@ -7,10 +7,7 @@ const getFinancialSummary = async (userId) => {
   const pool = getPool();
 
   // Obtener total de gastos del mes actual
-  const expensesResult = await pool
-    .request()
-    .input('userId', sql.Int, userId)
-    .query(`
+  const expensesResult = await pool.request().input('userId', sql.Int, userId).query(`
       SELECT ISNULL(SUM(monto), 0) as total_gastos
       FROM gastos
       WHERE usuario_id = @userId
@@ -19,10 +16,7 @@ const getFinancialSummary = async (userId) => {
     `);
 
   // Obtener total de ahorros
-  const savingsResult = await pool
-    .request()
-    .input('userId', sql.Int, userId)
-    .query(`
+  const savingsResult = await pool.request().input('userId', sql.Int, userId).query(`
       SELECT ISNULL(SUM(monto_actual), 0) as total_ahorros
       FROM ahorros
       WHERE usuario_id = @userId
@@ -46,10 +40,7 @@ const getChartData = async (userId, type, period) => {
 
   if (type === 'expenses') {
     // Gastos por categoría
-    const result = await pool
-      .request()
-      .input('userId', sql.Int, userId)
-      .query(`
+    const result = await pool.request().input('userId', sql.Int, userId).query(`
         SELECT 
           categoria,
           SUM(monto) as total
@@ -65,10 +56,7 @@ const getChartData = async (userId, type, period) => {
 
   if (type === 'savings') {
     // Progreso de ahorros
-    const result = await pool
-      .request()
-      .input('userId', sql.Int, userId)
-      .query(`
+    const result = await pool.request().input('userId', sql.Int, userId).query(`
         SELECT 
           nombre,
           objetivo,
@@ -93,10 +81,7 @@ const getAlerts = async (userId) => {
   const alerts = [];
 
   // Verificar presupuestos excedidos
-  const budgetsResult = await pool
-    .request()
-    .input('userId', sql.Int, userId)
-    .query(`
+  const budgetsResult = await pool.request().input('userId', sql.Int, userId).query(`
       SELECT 
         p.categoria,
         p.monto_limite,
@@ -133,4 +118,3 @@ module.exports = {
   getChartData,
   getAlerts,
 };
-

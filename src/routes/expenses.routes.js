@@ -14,15 +14,18 @@ router.use(authenticateToken);
  * @access  Private
  */
 router.post(
-    '/',
-    [
-        body('monto').isFloat({ min: 0 }).withMessage('El monto debe ser un número positivo'),
-        body('id_categoria').notEmpty().withMessage('La categoría es requerida'),
-        body('id_usuario').notEmpty().withMessage('El saldo es requerido para vincular a usuario'),
-        body('tipomovimiento').optional().isIn(['Ingreso','Egreso','Domiciliacion']).withMessage('Tipo inválido'),
-        validate,
-    ],
-    expensesController.createExpense
+  '/',
+  [
+    body('monto').isFloat({ min: 0 }).withMessage('El monto debe ser un número positivo'),
+    body('id_categoria').notEmpty().withMessage('La categoría es requerida'),
+    body('id_usuario').notEmpty().withMessage('El saldo es requerido para vincular a usuario'),
+    body('tipomovimiento')
+      .optional()
+      .isIn(['Ingreso', 'Egreso', 'Domiciliacion'])
+      .withMessage('Tipo inválido'),
+    validate,
+  ],
+  expensesController.createExpense
 );
 
 /**
@@ -31,36 +34,18 @@ router.post(
  * @access  Private
  */
 router.get(
-    '/',
-    [
-        query('startDate').optional().isISO8601().withMessage('Fecha de inicio inválida'),
-        query('endDate').optional().isISO8601().withMessage('Fecha de fin inválida'),
-        query('category').optional().isString(),
-        validate,
-    ],
-    expensesController.getExpenses
+  '/',
+  [
+    query('startDate').optional().isISO8601().withMessage('Fecha de inicio inválida'),
+    query('endDate').optional().isISO8601().withMessage('Fecha de fin inválida'),
+    query('category').optional().isString(),
+    validate,
+  ],
+  expensesController.getExpenses
 );
-router.get(
-    '/ingresos',
-    [
-        validate,
-    ],
-    expensesController.getIngresos
-);
-router.get(
-    '/organization',
-    [
-        validate,
-    ],
-    expensesController.getMovmentsOrganization
-);
-router.get(
-    '/organizationMontos',
-    [
-        validate,
-    ],
-    expensesController.getMontosOrganization
-);
+router.get('/ingresos', [validate], expensesController.getIngresos);
+router.get('/organization', [validate], expensesController.getMovmentsOrganization);
+router.get('/organizationMontos', [validate], expensesController.getMontosOrganization);
 
 /**
  * @route   GET /api/expenses/stats
@@ -68,12 +53,12 @@ router.get(
  * @access  Private
  */
 router.get(
-    '/stats',
-    [
-        query('period').optional().isIn(['monthly', 'yearly']).withMessage('Período inválido'),
-        validate,
-    ],
-    expensesController.getExpenseStats
+  '/stats',
+  [
+    query('period').optional().isIn(['monthly', 'yearly']).withMessage('Período inválido'),
+    validate,
+  ],
+  expensesController.getExpenseStats
 );
 
 /**
@@ -82,9 +67,9 @@ router.get(
  * @access  Private
  */
 router.get(
-    '/:id',
-    [param('id').isInt().withMessage('ID inválido'), validate],
-    expensesController.getExpenseById
+  '/:id',
+  [param('id').isInt().withMessage('ID inválido'), validate],
+  expensesController.getExpenseById
 );
 
 /**
@@ -93,16 +78,19 @@ router.get(
  * @access  Private
  */
 router.put(
-    '/:id',
-    [
-        param('id').isInt().withMessage('ID inválido'),
-        body('monto').optional().isFloat({ min: 0 }).withMessage('El monto debe ser un número positivo'),
-        body('categoria').optional().notEmpty().withMessage('La categoría no puede estar vacía'),
-        body('tipo').optional().isIn(['unico', 'recurrente']).withMessage('Tipo inválido'),
-        body('fecha').optional().isISO8601().withMessage('Fecha inválida'),
-        validate,
-    ],
-    expensesController.updateExpense
+  '/:id',
+  [
+    param('id').isInt().withMessage('ID inválido'),
+    body('monto')
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage('El monto debe ser un número positivo'),
+    body('categoria').optional().notEmpty().withMessage('La categoría no puede estar vacía'),
+    body('tipo').optional().isIn(['unico', 'recurrente']).withMessage('Tipo inválido'),
+    body('fecha').optional().isISO8601().withMessage('Fecha inválida'),
+    validate,
+  ],
+  expensesController.updateExpense
 );
 
 /**
@@ -111,10 +99,9 @@ router.put(
  * @access  Private
  */
 router.delete(
-    '/:id',
-    [param('id').isInt().withMessage('ID inválido'), validate],
-    expensesController.deleteExpense
+  '/:id',
+  [param('id').isInt().withMessage('ID inválido'), validate],
+  expensesController.deleteExpense
 );
 
 module.exports = router;
-

@@ -27,10 +27,10 @@ app.use(helmet());
 
 // CORS - Configuración para permitir requests desde frontend
 app.use(
-    cors({
-        origin: process.env.CORS_ORIGIN || '*',
-        credentials: true,
-    })
+  cors({
+    origin: process.env.CORS_ORIGIN || '*',
+    credentials: true,
+  })
 );
 
 // Parseo de JSON
@@ -42,9 +42,9 @@ app.use(compression());
 
 // Logger (solo en desarrollo)
 if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'));
+  app.use(morgan('dev'));
 } else {
-    app.use(morgan('combined'));
+  app.use(morgan('combined'));
 }
 
 // ====================
@@ -53,12 +53,12 @@ if (process.env.NODE_ENV === 'development') {
 
 // Ruta raíz
 app.get('/', (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: 'Bienvenido a AdmonY API',
-        version: '1.0.0',
-        documentation: '/api/health',
-    });
+  res.status(200).json({
+    success: true,
+    message: 'Bienvenido a AdmonY API',
+    version: '1.0.0',
+    documentation: '/api/health',
+  });
 });
 
 // API Routes
@@ -79,38 +79,37 @@ app.use(errorHandler);
 // ====================
 
 const startServer = async () => {
-    try {
-        // Conectar a la base de datos
-        await connectDB();
+  try {
+    // Conectar a la base de datos
+    await connectDB();
 
-        // Iniciar el servidor
-        app.listen(PORT, () => {
-            console.log('==========================================');
-            console.log(`🚀 Servidor AdmonY iniciado`);
-            console.log(`📡 Entorno: ${process.env.NODE_ENV || 'development'}`);
-            console.log(`🔗 URL: http://localhost:${PORT}`);
-            console.log(`📚 Health Check: http://localhost:${PORT}/api/health`);
-            console.log('==========================================');
-        });
-    } catch (error) {
-        console.error('❌ Error al iniciar el servidor:', error);
-        process.exit(1);
-    }
+    // Iniciar el servidor
+    app.listen(PORT, () => {
+      console.log('==========================================');
+      console.log(`🚀 Servidor AdmonY iniciado`);
+      console.log(`📡 Entorno: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔗 URL: http://localhost:${PORT}`);
+      console.log(`📚 Health Check: http://localhost:${PORT}/api/health`);
+      console.log('==========================================');
+    });
+  } catch (error) {
+    console.error('❌ Error al iniciar el servidor:', error);
+    process.exit(1);
+  }
 };
 
 // Manejo de errores no capturados
 process.on('unhandledRejection', (err) => {
-    console.error('❌ Error no manejado (Unhandled Rejection):', err);
-    process.exit(1);
+  console.error('❌ Error no manejado (Unhandled Rejection):', err);
+  process.exit(1);
 });
 
 process.on('uncaughtException', (err) => {
-    console.error('❌ Excepción no capturada (Uncaught Exception):', err);
-    process.exit(1);
+  console.error('❌ Excepción no capturada (Uncaught Exception):', err);
+  process.exit(1);
 });
 
 // Iniciar servidor
 startServer();
 
 module.exports = app;
-

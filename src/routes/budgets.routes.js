@@ -14,14 +14,19 @@ router.use(authenticateToken);
  * @access  Private
  */
 router.post(
-    '/',
-    [
-        body('categoria').notEmpty().withMessage('La categoría es requerida'),
-        body('monto_limite').isFloat({ min: 0 }).withMessage('El monto límite debe ser un número positivo'),
-        body('periodo').optional().isIn(['mensual', 'semanal', 'anual']).withMessage('Período inválido'),
-        validate,
-    ],
-    budgetsController.createBudget
+  '/',
+  [
+    body('categoria').notEmpty().withMessage('La categoría es requerida'),
+    body('monto_limite')
+      .isFloat({ min: 0 })
+      .withMessage('El monto límite debe ser un número positivo'),
+    body('periodo')
+      .optional()
+      .isIn(['mensual', 'semanal', 'anual'])
+      .withMessage('Período inválido'),
+    validate,
+  ],
+  budgetsController.createBudget
 );
 
 /**
@@ -37,13 +42,13 @@ router.get('/', budgetsController.getBudgets);
  * @access  Private
  */
 router.get(
-    '/analysis',
-    [
-        query('month').optional().isInt({ min: 1, max: 12 }).withMessage('Mes inválido'),
-        query('year').optional().isInt({ min: 2000 }).withMessage('Año inválido'),
-        validate,
-    ],
-    budgetsController.getBudgetAnalysis
+  '/analysis',
+  [
+    query('month').optional().isInt({ min: 1, max: 12 }).withMessage('Mes inválido'),
+    query('year').optional().isInt({ min: 2000 }).withMessage('Año inválido'),
+    validate,
+  ],
+  budgetsController.getBudgetAnalysis
 );
 
 /**
@@ -52,9 +57,9 @@ router.get(
  * @access  Private
  */
 router.get(
-    '/:id',
-    [param('id').isInt().withMessage('ID inválido'), validate],
-    budgetsController.getBudgetById
+  '/:id',
+  [param('id').isInt().withMessage('ID inválido'), validate],
+  budgetsController.getBudgetById
 );
 
 /**
@@ -63,15 +68,21 @@ router.get(
  * @access  Private
  */
 router.put(
-    '/:id',
-    [
-        param('id').isInt().withMessage('ID inválido'),
-        body('categoria').optional().notEmpty().withMessage('La categoría no puede estar vacía'),
-        body('monto_limite').optional().isFloat({ min: 0 }).withMessage('El monto límite debe ser un número positivo'),
-        body('periodo').optional().isIn(['mensual', 'semanal', 'anual']).withMessage('Período inválido'),
-        validate,
-    ],
-    budgetsController.updateBudget
+  '/:id',
+  [
+    param('id').isInt().withMessage('ID inválido'),
+    body('categoria').optional().notEmpty().withMessage('La categoría no puede estar vacía'),
+    body('monto_limite')
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage('El monto límite debe ser un número positivo'),
+    body('periodo')
+      .optional()
+      .isIn(['mensual', 'semanal', 'anual'])
+      .withMessage('Período inválido'),
+    validate,
+  ],
+  budgetsController.updateBudget
 );
 
 /**
@@ -80,10 +91,9 @@ router.put(
  * @access  Private
  */
 router.delete(
-    '/:id',
-    [param('id').isInt().withMessage('ID inválido'), validate],
-    budgetsController.deleteBudget
+  '/:id',
+  [param('id').isInt().withMessage('ID inválido'), validate],
+  budgetsController.deleteBudget
 );
 
 module.exports = router;
-

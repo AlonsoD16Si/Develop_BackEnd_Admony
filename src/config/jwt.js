@@ -9,7 +9,7 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
  * @returns {string} Token JWT
  */
 const generateToken = (payload) => {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 };
 
 /**
@@ -18,17 +18,16 @@ const generateToken = (payload) => {
  * @returns {Object} Payload decodificado
  */
 const verifyToken = (token) => {
-    try {
-        return jwt.verify(token, JWT_SECRET);
-    } catch (error) {
-        throw new Error('Token inválido o expirado');
-    }
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch (error) {
+    throw new Error('Token inválido o expirado');
+  }
 };
 
 module.exports = {
-    generateToken,
-    verifyToken,
-    JWT_SECRET,
-    JWT_EXPIRES_IN,
+  generateToken,
+  verifyToken,
+  JWT_SECRET,
+  JWT_EXPIRES_IN,
 };
-

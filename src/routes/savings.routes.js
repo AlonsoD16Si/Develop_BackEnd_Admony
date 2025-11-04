@@ -14,15 +14,18 @@ router.use(authenticateToken);
  * @access  Private
  */
 router.post(
-    '/',
-    [
-        body('nombre').notEmpty().withMessage('El nombre es requerido'),
-        body('objetivo').isFloat({ min: 0 }).withMessage('El objetivo debe ser un número positivo'),
-        body('monto_actual').optional().isFloat({ min: 0 }).withMessage('El monto actual debe ser un número positivo'),
-        body('fecha_objetivo').optional().isISO8601().withMessage('Fecha inválida'),
-        validate,
-    ],
-    savingsController.createSaving
+  '/',
+  [
+    body('nombre').notEmpty().withMessage('El nombre es requerido'),
+    body('objetivo').isFloat({ min: 0 }).withMessage('El objetivo debe ser un número positivo'),
+    body('monto_actual')
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage('El monto actual debe ser un número positivo'),
+    body('fecha_objetivo').optional().isISO8601().withMessage('Fecha inválida'),
+    validate,
+  ],
+  savingsController.createSaving
 );
 
 /**
@@ -45,9 +48,9 @@ router.get('/progress', savingsController.getSavingsProgress);
  * @access  Private
  */
 router.get(
-    '/:id',
-    [param('id').isInt().withMessage('ID inválido'), validate],
-    savingsController.getSavingById
+  '/:id',
+  [param('id').isInt().withMessage('ID inválido'), validate],
+  savingsController.getSavingById
 );
 
 /**
@@ -56,16 +59,22 @@ router.get(
  * @access  Private
  */
 router.put(
-    '/:id',
-    [
-        param('id').isInt().withMessage('ID inválido'),
-        body('nombre').optional().notEmpty().withMessage('El nombre no puede estar vacío'),
-        body('objetivo').optional().isFloat({ min: 0 }).withMessage('El objetivo debe ser un número positivo'),
-        body('monto_actual').optional().isFloat({ min: 0 }).withMessage('El monto actual debe ser un número positivo'),
-        body('fecha_objetivo').optional().isISO8601().withMessage('Fecha inválida'),
-        validate,
-    ],
-    savingsController.updateSaving
+  '/:id',
+  [
+    param('id').isInt().withMessage('ID inválido'),
+    body('nombre').optional().notEmpty().withMessage('El nombre no puede estar vacío'),
+    body('objetivo')
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage('El objetivo debe ser un número positivo'),
+    body('monto_actual')
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage('El monto actual debe ser un número positivo'),
+    body('fecha_objetivo').optional().isISO8601().withMessage('Fecha inválida'),
+    validate,
+  ],
+  savingsController.updateSaving
 );
 
 /**
@@ -74,10 +83,9 @@ router.put(
  * @access  Private
  */
 router.delete(
-    '/:id',
-    [param('id').isInt().withMessage('ID inválido'), validate],
-    savingsController.deleteSaving
+  '/:id',
+  [param('id').isInt().withMessage('ID inválido'), validate],
+  savingsController.deleteSaving
 );
 
 module.exports = router;
-

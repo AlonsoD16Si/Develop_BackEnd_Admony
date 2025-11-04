@@ -21,13 +21,16 @@ router.get('/summary', dashboardController.getFinancialSummary);
  * @access  Private
  */
 router.get(
-    '/charts',
-    [
-        query('type').isIn(['expenses', 'savings', 'income']).withMessage('Tipo inválido'),
-        query('period').optional().isIn(['weekly', 'monthly', 'yearly']).withMessage('Período inválido'),
-        validate,
-    ],
-    dashboardController.getChartData
+  '/charts',
+  [
+    query('type').isIn(['expenses', 'savings', 'income']).withMessage('Tipo inválido'),
+    query('period')
+      .optional()
+      .isIn(['weekly', 'monthly', 'yearly'])
+      .withMessage('Período inválido'),
+    validate,
+  ],
+  dashboardController.getChartData
 );
 
 /**
@@ -38,4 +41,3 @@ router.get(
 router.get('/alerts', dashboardController.getAlerts);
 
 module.exports = router;
-

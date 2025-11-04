@@ -11,17 +11,17 @@ const { body } = require('express-validator');
  * @access  Public
  */
 router.post(
-    '/register',
-    [
-        body('email').isEmail().withMessage('Email inválido'),
-        body('password')
-            .isLength({ min: 6 })
-            .withMessage('La contraseña debe tener al menos 6 caracteres'),
-        body('nombre').notEmpty().withMessage('El nombre es requerido'),
-        body('apellido').notEmpty().withMessage('El apellido es requerido'),
-        validate,
-    ],
-    authController.register
+  '/register',
+  [
+    body('email').isEmail().withMessage('Email inválido'),
+    body('password')
+      .isLength({ min: 6 })
+      .withMessage('La contraseña debe tener al menos 6 caracteres'),
+    body('nombre').notEmpty().withMessage('El nombre es requerido'),
+    body('apellido').notEmpty().withMessage('El apellido es requerido'),
+    validate,
+  ],
+  authController.register
 );
 
 /**
@@ -30,13 +30,13 @@ router.post(
  * @access  Public
  */
 router.post(
-    '/login',
-    [
-        body('correo').isEmail().withMessage('Email inválido'),
-        body('constrasenia').notEmpty().withMessage('La contraseña es requerida'),
-        validate,
-    ],
-    authController.login
+  '/login',
+  [
+    body('correo').isEmail().withMessage('Email inválido'),
+    body('constrasenia').notEmpty().withMessage('La contraseña es requerida'),
+    validate,
+  ],
+  authController.login
 );
 
 /**
@@ -52,9 +52,9 @@ router.get('/profile', authenticateToken, authController.getProfile);
  * @access  Public
  */
 router.post(
-    '/request-password-reset',
-    [body('email').isEmail().withMessage('Email inválido'), validate],
-    authController.requestPasswordReset
+  '/request-password-reset',
+  [body('email').isEmail().withMessage('Email inválido'), validate],
+  authController.requestPasswordReset
 );
 
 /**
@@ -63,16 +63,15 @@ router.post(
  * @access  Public
  */
 router.post(
-    '/reset-password',
-    [
-        body('token').notEmpty().withMessage('Token requerido'),
-        body('newPassword')
-            .isLength({ min: 6 })
-            .withMessage('La contraseña debe tener al menos 6 caracteres'),
-        validate,
-    ],
-    authController.resetPassword
+  '/reset-password',
+  [
+    body('token').notEmpty().withMessage('Token requerido'),
+    body('newPassword')
+      .isLength({ min: 6 })
+      .withMessage('La contraseña debe tener al menos 6 caracteres'),
+    validate,
+  ],
+  authController.resetPassword
 );
 
 module.exports = router;
-
