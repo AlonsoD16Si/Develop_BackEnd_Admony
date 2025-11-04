@@ -161,6 +161,9 @@ const getExpenseStats = async (userId, period = 'monthly') => {
       FROM Movimiento
       WHERE Id_Saldo = @Id_Saldo
         AND FechaMovimiento >= DATEADD(month, -1, GETDATE())
+      FROM Movimiento
+      WHERE Id_Saldo = @Id_Saldo
+        AND FechaMovimiento >= DATEADD(month, -1, GETDATE())
       GROUP BY categoria
       ORDER BY total DESC
     `);

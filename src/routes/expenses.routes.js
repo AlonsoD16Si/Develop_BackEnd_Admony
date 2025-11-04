@@ -20,6 +20,9 @@ router.post(
         body('id_categoria').notEmpty().withMessage('La categoría es requerida'),
         body('id_usuario').notEmpty().withMessage('El saldo es requerido para vincular a usuario'),
         body('tipomovimiento').optional().isIn(['Ingreso','Egreso','Domiciliacion']).withMessage('Tipo inválido'),
+        body('id_categoria').notEmpty().withMessage('La categoría es requerida'),
+        body('id_usuario').notEmpty().withMessage('El saldo es requerido para vincular a usuario'),
+        body('tipomovimiento').optional().isIn(['Ingreso','Egreso','Domiciliacion']).withMessage('Tipo inválido'),
         validate,
     ],
     expensesController.createExpense

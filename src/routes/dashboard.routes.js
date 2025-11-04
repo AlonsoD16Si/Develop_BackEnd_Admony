@@ -17,27 +17,36 @@ router.get('/summary', dashboardController.getFinancialSummary);
 
 /**
  * @route   GET /api/dashboard/charts
- * @desc    Obtener datos para gráficas
+ * @desc    Obtener datos para gráficas (type: expenses, savings, income)
  * @access  Private
  */
 router.get(
   '/charts',
   [
-    query('type').isIn(['expenses', 'savings', 'income']).withMessage('Tipo inválido'),
+    query('type')
+      .isIn(['expenses', 'savings', 'income'])
+      .withMessage('Tipo inválido'),
     query('period')
       .optional()
-      .isIn(['weekly', 'monthly', 'yearly'])
+      .isIn(['monthly', '6m', 'yearly'])
       .withMessage('Período inválido'),
-    validate,
+    validate
   ],
   dashboardController.getChartData
 );
 
 /**
  * @route   GET /api/dashboard/alerts
- * @desc    Obtener alertas y notificaciones
+ * @desc    Obtener alertas y notificaciones financieras
  * @access  Private
  */
 router.get('/alerts', dashboardController.getAlerts);
+
+/**
+ * @route   GET /api/dashboard/all
+ * @desc    Obtener todos los datos del dashboard (resumen, gráficas, alertas)
+ * @access  Private
+ */
+router.get('/all', dashboardController.getDashboardData);
 
 module.exports = router;

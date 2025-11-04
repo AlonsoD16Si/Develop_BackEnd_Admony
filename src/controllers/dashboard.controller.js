@@ -19,7 +19,7 @@ const getFinancialSummary = async (req, res, next) => {
 };
 
 /**
- * Obtener datos para gráficas
+ * Obtener datos para gráficas del dashboard
  */
 const getChartData = async (req, res, next) => {
   try {
@@ -38,7 +38,7 @@ const getChartData = async (req, res, next) => {
 };
 
 /**
- * Obtener alertas y notificaciones
+ * Obtener alertas financieras del usuario
  */
 const getAlerts = async (req, res, next) => {
   try {
