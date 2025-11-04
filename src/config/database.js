@@ -6,7 +6,7 @@ const config = {
     server: process.env.DB_SERVER,
     database: process.env.DB_NAME,
     options: {
-        encrypt: true, // Para Azure
+        encrypt: true,
         trustServerCertificate: process.env.NODE_ENV === 'development',
     },
     pool: {

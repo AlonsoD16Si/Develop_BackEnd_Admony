@@ -5,8 +5,7 @@ const dashboardService = require('../services/dashboard.service');
  */
 const getFinancialSummary = async (req, res, next) => {
     try {
-        const userId = req.user.id;
-
+        const userId = req.user.Id_Usuario;
         const summary = await dashboardService.getFinancialSummary(userId);
 
         res.status(200).json({
@@ -19,12 +18,12 @@ const getFinancialSummary = async (req, res, next) => {
 };
 
 /**
- * Obtener datos para gráficas
+ * Obtener datos para gráficas del dashboard
  */
 const getChartData = async (req, res, next) => {
     try {
-        const userId = req.user.id;
-        const { type, period } = req.query; // type: expenses, savings, income | period: weekly, monthly, yearly
+        const userId = req.user.Id_Usuario;
+        const { type, period } = req.query;
 
         const chartData = await dashboardService.getChartData(userId, type, period);
 
@@ -38,12 +37,11 @@ const getChartData = async (req, res, next) => {
 };
 
 /**
- * Obtener alertas y notificaciones
+ * Obtener alertas financieras del usuario
  */
 const getAlerts = async (req, res, next) => {
     try {
-        const userId = req.user.id;
-
+        const userId = req.user.Id_Usuario;
         const alerts = await dashboardService.getAlerts(userId);
 
         res.status(200).json({
@@ -55,9 +53,26 @@ const getAlerts = async (req, res, next) => {
     }
 };
 
+/**
+ * Obtener todos los datos del dashboard
+ */
+const getDashboardData = async (req, res, next) => {
+    try {
+        const userId = req.user.Id_Usuario;
+        const dashboardData = await dashboardService.getDashboardData(userId);
+
+        res.status(200).json({
+            success: true,
+            data: dashboardData,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getFinancialSummary,
     getChartData,
     getAlerts,
+    getDashboardData
 };
-

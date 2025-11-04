@@ -7,7 +7,6 @@ const createExpense = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const expenseData = req.body;
-
         const result = await expensesService.createExpense(userId, expenseData);
 
         res.status(201).json({
@@ -29,6 +28,50 @@ const getExpenses = async (req, res, next) => {
         const { startDate, endDate, category } = req.query;
 
         const expenses = await expensesService.getExpenses(userId, { startDate, endDate, category });
+
+        res.status(200).json({
+            success: true,
+            data: expenses,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+const getIngresos = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const { startDate, endDate, category } = req.query;
+
+        const expenses = await expensesService.getIngresos(userId, { startDate, endDate, category });
+
+        res.status(200).json({
+            success: true,
+            data: expenses,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getMovmentsOrganization = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+
+        const expenses = await expensesService.getMovmentsOrganization(userId);
+
+        res.status(200).json({
+            success: true,
+            data: expenses,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+const getMontosOrganization = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+
+        const expenses = await expensesService.getMontosOrganization(userId);
 
         res.status(200).json({
             success: true,
@@ -124,5 +167,8 @@ module.exports = {
     updateExpense,
     deleteExpense,
     getExpenseStats,
+    getIngresos,
+    getMovmentsOrganization,
+    getMontosOrganization
 };
 
