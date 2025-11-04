@@ -8,7 +8,7 @@ const savingsRoutes = require('./savings.routes');
 const budgetsRoutes = require('./budgets.routes');
 const dashboardRoutes = require('./dashboard.routes');
 const organizationRoutes = require('./organization.routes');
-
+const reportsRoutes = require('./reports.routes')
 // Definir las rutas base
 router.use('/auth', authRoutes);
 router.use('/expenses', expensesRoutes);
@@ -16,6 +16,7 @@ router.use('/savings', savingsRoutes);
 router.use('/budgets', budgetsRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/organization', organizationRoutes);
+router.use('/reports', reportsRoutes);
 
 // Ruta de prueba para verificar que la API está funcionando
 router.get('/health', (req, res) => {
