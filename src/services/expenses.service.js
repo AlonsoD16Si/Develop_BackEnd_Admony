@@ -6,7 +6,6 @@ const { getPool, sql } = require('../config/database');
 const createExpense = async (Id_Usuario, expenseData) => {
   const pool = getPool();
   const data = await GetSaldo(Id_Usuario);
-  console.log(data, Id_Usuario);
   const { monto, id_categoria, descripcion, tipomovimiento } = expenseData;
 
   if (!data || data.length === 0) {
