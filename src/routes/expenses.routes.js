@@ -43,6 +43,7 @@ router.get(
 );
 router.get(
   '/ingresos',
+  authenticateToken,
   [
     validate,
   ],
@@ -50,6 +51,7 @@ router.get(
 );
 router.get(
   '/organization',
+  authenticateToken,
   [
     validate,
   ],
@@ -57,6 +59,7 @@ router.get(
 );
 router.get(
   '/organizationMontos',
+  authenticateToken,
   [
     validate,
   ],
