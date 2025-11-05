@@ -109,9 +109,9 @@ const eliminarMiembro = async (req, res, next) => {
   }
 };
 
-module.exports = { 
-  crearOrganizacion, 
-  agregarMiembro, 
+module.exports = {
+  crearOrganizacion,
+  agregarMiembro,
   obtenerMiembros,
-  eliminarMiembro 
+  eliminarMiembro
 };
