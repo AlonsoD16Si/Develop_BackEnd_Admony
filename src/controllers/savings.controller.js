@@ -5,7 +5,7 @@ const savingsService = require('../services/savings.service');
  */
 const createSaving = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.Id_Usuario;
     const savingData = req.body;
 
     const result = await savingsService.createSaving(userId, savingData);
@@ -25,7 +25,7 @@ const createSaving = async (req, res, next) => {
  */
 const getSavings = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.Id_Usuario;
 
     const savings = await savingsService.getSavings(userId);
 

@@ -1,7 +1,7 @@
 require('dotenv').config();
 const sql = require('mssql');
 
-const hasInstance = !!process.env.DB_INSTANCE;
+const hasInstance = process.env.DB_INSTANCE;
 
 const config = {
   user: process.env.DB_USER,

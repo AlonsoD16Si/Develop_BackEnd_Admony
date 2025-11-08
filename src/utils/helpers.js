@@ -8,6 +8,7 @@
  * @param {string} currency - Código de moneda (USD, MXN, etc.)
  * @returns {string} Cantidad formateada
  */
+
 const formatCurrency = (amount, currency = 'USD') => {
   return new Intl.NumberFormat('es-MX', {
     style: 'currency',

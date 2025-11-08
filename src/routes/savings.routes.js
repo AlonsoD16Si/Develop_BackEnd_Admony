@@ -6,7 +6,6 @@ const validate = require('../middlewares/validator.middleware');
 const { body, param } = require('express-validator');
 
 // Todas las rutas requieren autenticación
-router.use(authenticateToken);
 
 /**
  * @route   POST /api/savings
@@ -15,15 +14,10 @@ router.use(authenticateToken);
  */
 router.post(
   '/',
+  authenticateToken,
   [
-    body('nombre').notEmpty().withMessage('El nombre es requerido'),
-    body('objetivo').isFloat({ min: 0 }).withMessage('El objetivo debe ser un número positivo'),
-    body('monto_actual')
-      .optional()
-      .isFloat({ min: 0 })
-      .withMessage('El monto actual debe ser un número positivo'),
-    body('fecha_objetivo').optional().isISO8601().withMessage('Fecha inválida'),
-    validate,
+  body('monto').notEmpty().withMessage('El Monto es requerido'),
+  validate,
   ],
   savingsController.createSaving
 );
@@ -33,7 +27,9 @@ router.post(
  * @desc    Obtener todos los ahorros del usuario
  * @access  Private
  */
-router.get('/', savingsController.getSavings);
+router.get('/', authenticateToken, [
+  validate,
+], savingsController.getSavings);
 
 /**
  * @route   GET /api/savings/progress

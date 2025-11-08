@@ -84,8 +84,11 @@ const getExpenses = async (Id_Usuario, filters = {}) => {
   const data = await GetSaldo(Id_Usuario);
   const pool = getPool();
 
-  let query = `SELECT Id_Movimiento, Id_Categoria, TipoMovimiento, Monto, Descripcion, FechaMovimiento
-        FROM Movimiento WHERE TipoMovimiento = 'Egreso' and Id_Saldo = @Id_Saldo ORDER BY FechaMovimiento DESC `;
+  let query = `SELECT Id_Movimiento, c.nombre AS Categoria, TipoMovimiento, Monto, m.Descripcion, FechaMovimiento, c.Descripcion AS Cat_desc
+        FROM Movimiento AS m
+        LEFT JOIN Categoria AS c ON c.Id_Categoria = m.Id_Categoria
+		    WHERE TipoMovimiento = 'Egreso' and Id_Saldo = @Id_Saldo
+        ORDER BY FechaMovimiento DESC `;
   const request = pool.request().input('Id_Saldo', sql.Int, data[0].Id_Saldo);
 
   const result = await request.query(query);
@@ -97,8 +100,11 @@ const getIngresos = async (Id_Usuario, filters = {}) => {
   const data = await GetSaldo(Id_Usuario);
   const pool = getPool();
 
-  let query = `SELECT Id_Movimiento, Id_Categoria, TipoMovimiento, Monto, Descripcion, FechaMovimiento
-        FROM Movimiento WHERE TipoMovimiento = 'Ingreso' and Id_Saldo = @Id_Saldo ORDER BY FechaMovimiento DESC `;
+  let query = `SELECT Id_Movimiento, c.nombre AS Categoria, TipoMovimiento, Monto, m.Descripcion, FechaMovimiento, c.Descripcion AS Cat_desc
+        FROM Movimiento AS m
+        LEFT JOIN Categoria AS c ON c.Id_Categoria = m.Id_Categoria
+		    WHERE TipoMovimiento = 'Ingreso' and Id_Saldo = @Id_Saldo
+        ORDER BY FechaMovimiento DESC`;
   const request = pool.request().input('Id_Saldo', sql.Int, data[0].Id_Saldo);
 
   const result = await request.query(query);
@@ -232,5 +238,6 @@ module.exports = {
   getExpenseStats,
   getIngresos,
   getMovmentsOrganization,
+  GetSaldo,
   getMontosOrganization,
 };
