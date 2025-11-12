@@ -112,7 +112,7 @@ const getProfile = async (Id_Usuario) => {
   const result = await pool
     .request()
     .input('Id_Usuario', sql.Int, Id_Usuario)
-    .query('SELECT Id_Usuario, Correo, Nombre, Rol FROM Usuario WHERE Id_Usuario = @Id_Usuario');
+    .query('SELECT Id_Usuario as id_usuario, Correo as correo, Nombre as nombre, Rol as rol, Estatus as estatus FROM Usuario WHERE Id_Usuario = @Id_Usuario');
 
   if (result.recordset.length === 0) {
     const error = new Error('Usuario no encontrado');
