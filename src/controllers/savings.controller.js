@@ -20,6 +20,21 @@ const createSaving = async (req, res, next) => {
   }
 };
 
+const createObjective = async (req, res, next) => {
+  try {
+    const userId = req.user.Id_Usuario;
+    const savingData = req.body;
+    const result = await savingsService.createObjective(userId, savingData)
+    res.status(201).json({
+      success: true,
+      message: 'Ahorro registrado exitosamente',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 /**
  * Obtener todos los ahorros del usuario
  */
@@ -28,6 +43,20 @@ const getSavings = async (req, res, next) => {
     const userId = req.user.Id_Usuario;
 
     const savings = await savingsService.getSavings(userId);
+
+    res.status(200).json({
+      success: true,
+      data: savings,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const getObjectives = async (req, res, next) => {
+  try {
+    const userId = req.user.Id_Usuario;
+
+    const savings = await savingsService.getObjectives(userId);
 
     res.status(200).json({
       success: true,
@@ -62,11 +91,10 @@ const getSavingById = async (req, res, next) => {
  */
 const updateSaving = async (req, res, next) => {
   try {
-    const userId = req.user.id;
-    const { id } = req.params;
+    const userId = req.user.Id_Usuario;
     const updateData = req.body;
 
-    const result = await savingsService.updateSaving(userId, id, updateData);
+    const result = await savingsService.updateSaving(userId, updateData);
 
     res.status(200).json({
       success: true,
@@ -122,4 +150,6 @@ module.exports = {
   updateSaving,
   deleteSaving,
   getSavingsProgress,
+  getObjectives,
+  createObjective
 };

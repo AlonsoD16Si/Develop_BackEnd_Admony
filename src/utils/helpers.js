@@ -9,6 +9,8 @@
  * @returns {string} Cantidad formateada
  */
 
+const {getPool, sql} = require('../config/database')
+
 const formatCurrency = (amount, currency = 'USD') => {
   return new Intl.NumberFormat('es-MX', {
     style: 'currency',
@@ -29,6 +31,15 @@ const formatDate = (date, locale = 'es-MX') => {
     day: 'numeric',
   }).format(new Date(date));
 };
+
+
+const GetAhorro = async (id) =>{
+  const pool = getPool();
+  let query = `SELECT Id_Ahorro FROM Ahorro WHERE Id_Saldo = @Id_Saldo`;
+  const request = pool.request().input('Id_Saldo', sql.Int, id)
+  const result = await request.query(query);
+  return result.recordset;
+}
 
 /**
  * Calcula el porcentaje
@@ -122,4 +133,5 @@ module.exports = {
   sanitizeString,
   isValidEmail,
   roundToDecimals,
+  GetAhorro
 };

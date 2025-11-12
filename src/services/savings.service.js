@@ -1,5 +1,6 @@
 const { getPool, sql } = require('../config/database');
 const { GetSaldo } = require('./expenses.service')
+const { GetAhorro } = require('../utils/helpers')
 
 /**
  * Crear un nuevo ahorro/objetivo
@@ -66,6 +67,50 @@ const getSavings = async (userId) => {
   return result.recordset;
 };
 
+
+const getObjectives = async (userId) => {
+  const pool = getPool();
+
+  const data = await GetSaldo(userId);
+  const id_Ahorro = await GetAhorro(data[0].Id_Saldo);
+
+  let query = `SELECT 
+                o.Id_Objetivo,
+                o.Id_Ahorro,
+                o.Nombre, 
+                o.MontoMeta, 
+                o.Descripcion,
+                a.Monto
+              FROM 
+              Objetivo AS O 
+              LEFT JOIN Ahorro AS a 
+              ON a.Id_Ahorro = @Id_Ahorro;`;
+  const request = pool.request().input('Id_Ahorro', sql.Int, id_Ahorro[0].Id_Ahorro);
+  const result = await request.query(query)
+
+  return result.recordset;
+}
+
+const createObjective = async (userId, savingData) => {
+  const pool = getPool();
+  const { id_Ahorro, nombre, descripcion, montoMeta } = savingData;
+
+  const result = await pool
+    .request()
+    .input('Id_Ahorro', sql.Int, id_Ahorro)
+    .input('Nombre', sql.VarChar, nombre)
+    .input('Descripcion', sql.VarChar, descripcion)
+    .input('MontoMeta', sql.Float, montoMeta)
+    .query(`
+      INSERT INTO Objetivo (Id_Ahorro, Nombre, Descripcion, MontoMeta)
+      OUTPUT INSERTED.Id_Objetivo
+      VALUES (@Id_Ahorro, @Nombre, @Descripcion, @MontoMeta)
+    `);
+
+  return result.recordset
+}
+
+
 /**
  * Obtener un ahorro específico
  */
@@ -90,34 +135,50 @@ const getSavingById = async (userId, savingId) => {
 /**
  * Actualizar un ahorro
  */
-const updateSaving = async (userId, savingId, updateData) => {
+const updateSaving = async (userId, updateData) => {
   const pool = getPool();
-  const { nombre, objetivo, monto_actual, fecha_objetivo } = updateData;
+  const data = await GetSaldo(userId)
+  const saldoActual = parseFloat(data[0].monto);
+  const { id_Ahorro, monto } = updateData;
 
-  const result = await pool
-    .request()
-    .input('userId', sql.Int, userId)
-    .input('savingId', sql.Int, savingId)
-    .input('nombre', sql.VarChar, nombre)
-    .input('objetivo', sql.Decimal(10, 2), objetivo)
-    .input('monto_actual', sql.Decimal(10, 2), monto_actual)
-    .input('fecha_objetivo', sql.DateTime, fecha_objetivo).query(`
-      UPDATE ahorros
-      SET nombre = @nombre,
-          objetivo = @objetivo,
-          monto_actual = @monto_actual,
-          fecha_objetivo = @fecha_objetivo
-      OUTPUT INSERTED.*
-      WHERE id = @savingId AND usuario_id = @userId
-    `);
+  const transaction = new sql.Transaction(pool);
+  try {
+    await transaction.begin();
+    const request = new sql.Request(transaction);
+    request.input('Monto', sql.Decimal, monto)
+    request.input('Id_Ahorro', sql.Int, id_Ahorro)
+    const insertResult = await request.query(`
+        UPDATE Ahorro
+        SET Monto = Monto + @Monto 
+        WHERE Id_Ahorro = @Id_Ahorro 
+      `);
+    const updateRequest = new sql.Request(transaction);
+    updateRequest.input('Id_Saldo', sql.Int, data[0].Id_Saldo);
+    updateRequest.input('Monto', sql.Decimal(10, 2), monto);
 
-  if (result.recordset.length === 0) {
-    const error = new Error('Ahorro no encontrado');
-    error.statusCode = 404;
-    throw error;
+    if (monto < saldoActual) {
+      await updateRequest.query(`
+                  UPDATE Saldo
+                  SET Monto = Monto - @Monto
+                  WHERE Id_Saldo = @Id_Saldo
+              `);
+    } else {
+      throw new Error('No hay suficiente saldo');
+    }
+
+    await transaction.commit();
+    return insertResult.rowsAffected;
+  } catch (err) {
+    try {
+      await transaction.rollback();
+    } catch (rollbackErr) {
+      console.error('Error al hacer rollback:', rollbackErr.message);
+    }
+
+    console.error('Error en createExpense:', err);
+    throw new Error('No se pudo registrar el gasto');
   }
 
-  return result.recordset[0];
 };
 
 /**
@@ -167,4 +228,6 @@ module.exports = {
   updateSaving,
   deleteSaving,
   getSavingsProgress,
+  getObjectives,
+  createObjective
 };

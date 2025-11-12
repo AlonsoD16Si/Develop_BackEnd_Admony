@@ -22,6 +22,26 @@ router.post(
   savingsController.createSaving
 );
 
+router.post(
+  '/objectives',
+  authenticateToken,
+  [
+  body('id_Ahorro').notEmpty().withMessage('El nombre es requerido'),
+  body('nombre').notEmpty().withMessage('El nombre es requerido'),
+  body('montoMeta').notEmpty().withMessage('El monto es requerido'),
+  body('descripcion').notEmpty().withMessage('La Descripción es requerido'),
+  validate,
+  ],
+  savingsController.createObjective
+);
+
+
+
+router.get('/objectives',
+  authenticateToken,
+  savingsController.getObjectives
+)
+
 /**
  * @route   GET /api/savings
  * @desc    Obtener todos los ahorros del usuario
@@ -55,19 +75,14 @@ router.get(
  * @access  Private
  */
 router.put(
-  '/:id',
+  '/',
+  authenticateToken,
   [
-    param('id').isInt().withMessage('ID inválido'),
-    body('nombre').optional().notEmpty().withMessage('El nombre no puede estar vacío'),
-    body('objetivo')
+    body('id_Ahorro').optional().notEmpty().withMessage('El nombre no puede estar vacío'),
+    body('monto')
       .optional()
       .isFloat({ min: 0 })
       .withMessage('El objetivo debe ser un número positivo'),
-    body('monto_actual')
-      .optional()
-      .isFloat({ min: 0 })
-      .withMessage('El monto actual debe ser un número positivo'),
-    body('fecha_objetivo').optional().isISO8601().withMessage('Fecha inválida'),
     validate,
   ],
   savingsController.updateSaving
