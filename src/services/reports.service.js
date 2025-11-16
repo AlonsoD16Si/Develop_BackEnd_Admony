@@ -1,23 +1,41 @@
 // services/reports.service.js
 const { getPool, sql } = require('../config/database');
 
-// Helper: consigue el Id_Saldo único del usuario
 async function getUserSaldoId(pool, userId) {
+    if (userId == null) {           // null o undefined
+        const e = new Error('userId inválido en getUserSaldoId');
+        e.statusCode = 400;
+        throw e;
+    }
+
+    const dbInfo = await pool.request().query(`
+        SELECT 
+            DB_NAME()     AS CurrentDB,
+            SCHEMA_NAME() AS CurrentSchema,
+            @@SERVERNAME  AS ServerName
+    `);
+    console.log('DB INFO ->', dbInfo.recordset[0]);
+    console.log('getUserSaldoId -> userId recibido:', userId, typeof userId);
+
+    // Puedes dejar los DEBUG si quieres, pero ya no son necesarios siempre
     const rs = await pool
         .request()
         .input('userId', sql.Int, userId)
         .query(`
-      SELECT s.Id_Saldo
-      FROM Saldo s
-      INNER JOIN Usuario u ON u.Id_Usuario = s.Id_Usuario
-      WHERE u.Id_Usuario = @userId
-    `);
+          SELECT TOP 1 Id_Saldo, Id_Usuario, Monto
+          FROM Saldo
+          WHERE Id_Usuario = @userId
+          ORDER BY Id_Saldo DESC;
+        `);
+
+    console.log('getUserSaldoId -> recordset (parametrizada):', rs.recordset);
 
     if (rs.recordset.length === 0) {
         const e = new Error('Saldo no encontrado para el usuario');
         e.statusCode = 404;
         throw e;
     }
+
     return rs.recordset[0].Id_Saldo;
 }
 

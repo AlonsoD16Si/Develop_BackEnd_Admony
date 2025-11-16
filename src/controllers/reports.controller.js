@@ -1,95 +1,96 @@
 // controllers/reports.controller.js
 const reportsService = require('../services/reports.service');
-
-/**
- * GET /api/reports/summary?from=YYYY-MM-DD&to=YYYY-MM-DD
- */
+const { getUserIdFromReq } = require('../utils/helpers');
 const getFinancialSummary = async (req, res, next) => {
     try {
-        const userId = req.user.id;
-        const { from, to } = req.query;
+        console.log('req.user en getFinancialSummary:', req.user);
+        const userId = getUserIdFromReq(req);
+        console.log('userId que se manda al service:', userId);
 
-        const data = await reportsService.getFinancialSummary(userId, { from, to });
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
+        }
 
-        res.status(200).json({ success: true, data });
+        const result = await reportsService.getFinancialSummary(userId, req.query);
+        res.status(200).json({ success: true, data: result });
     } catch (err) {
         next(err);
     }
 };
 
-/**
- * GET /api/reports/cashflow/monthly?year=2025
- */
 const getMonthlyCashflow = async (req, res, next) => {
     try {
-        const userId = req.user.id;
+        const userId = getUserIdFromReq(req);
         const { year } = req.query;
 
-        const data = await reportsService.getMonthlyCashflow(userId, { year: Number(year) });
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
+        }
 
+        const data = await reportsService.getMonthlyCashflow(userId, { year: Number(year) });
         res.status(200).json({ success: true, data });
     } catch (err) {
         next(err);
     }
 };
 
-/**
- * GET /api/reports/categories?from=YYYY-MM-DD&to=YYYY-MM-DD
- */
 const getCategoryBreakdown = async (req, res, next) => {
     try {
-        const userId = req.user.id;
+        const userId = getUserIdFromReq(req);
         const { from, to } = req.query;
+
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
+        }
 
         const data = await reportsService.getCategoryBreakdown(userId, { from, to });
-
         res.status(200).json({ success: true, data });
     } catch (err) {
         next(err);
     }
 };
 
-/**
- * GET /api/reports/recurrings?months=6
- */
 const getRecurringPayments = async (req, res, next) => {
     try {
-        const userId = req.user.id;
+        const userId = getUserIdFromReq(req);
         const months = req.query.months ? Number(req.query.months) : 6;
 
-        const data = await reportsService.getRecurringPayments(userId, { months });
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
+        }
 
+        const data = await reportsService.getRecurringPayments(userId, { months });
         res.status(200).json({ success: true, data });
     } catch (err) {
         next(err);
     }
 };
 
-/**
- * GET /api/reports/savings
- */
 const getSavingsOverview = async (req, res, next) => {
     try {
-        const userId = req.user.id;
+        const userId = getUserIdFromReq(req);
+
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
+        }
 
         const data = await reportsService.getSavingsOverview(userId);
-
         res.status(200).json({ success: true, data });
     } catch (err) {
         next(err);
     }
 };
 
-/**
- * GET /api/reports/extras?from=YYYY-MM-DD&to=YYYY-MM-DD
- */
 const getExtrasSummary = async (req, res, next) => {
     try {
-        const userId = req.user.id;
+        const userId = getUserIdFromReq(req);
         const { from, to } = req.query;
 
-        const data = await reportsService.getExtrasSummary(userId, { from, to });
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
+        }
 
+        const data = await reportsService.getExtrasSummary(userId, { from, to });
         res.status(200).json({ success: true, data });
     } catch (err) {
         next(err);

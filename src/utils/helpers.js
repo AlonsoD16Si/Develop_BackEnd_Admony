@@ -110,16 +110,28 @@ const roundToDecimals = (num, decimals = 2) => {
     return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
 };
 
+
+const getUserIdFromReq = (req) => {
+  return (
+    req?.user?.Id_Usuario ??
+    req?.user?.id ??
+    req?.user?.userId ??
+    null
+  );
+};
+
 module.exports = {
-    formatCurrency,
-    formatDate,
-    calculatePercentage,
-    generateRandomCode,
-    isFutureDate,
-    getFirstDayOfMonth,
-    getLastDayOfMonth,
-    sanitizeString,
-    isValidEmail,
-    roundToDecimals,
+  formatCurrency,
+  formatDate,
+  calculatePercentage,
+  generateRandomCode,
+  isFutureDate,
+  getFirstDayOfMonth,
+  getLastDayOfMonth,
+  sanitizeString,
+  isValidEmail,
+  roundToDecimals,
+  getUserIdFromReq,      
+
 };
 
